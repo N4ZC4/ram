@@ -1,584 +1,528 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="el">
 <head>
-  <meta charset="UTF-8" />
-  <title>N4ZC4 // Cyber Ops</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RAM | Mr. Robot Xmas Vault</title>
   <style>
-    :root {
-      --bg: #02050b;
-      --panel: #050b18;
-      --accent: #25ff6b;
-      --accent-soft: rgba(37, 255, 107, 0.25);
-      --text: #d8ffe4;
-      --muted: #6fa483;
+    :root{
+      --bg:#070a07; --panel:#0b120b; --text:#cfe8cf; --muted:#86a186;
+      --green:#5dff78; --green2:#2bbf44; --red:#ff5d5d; --amber:#ffd65d;
+      --border:#173017;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
-
-    * {
-      box-sizing: border-box;
+    html,body{height:100%;}
+    body{
+      margin:0; background:radial-gradient(1200px 700px at 20% 10%, #0b160b 0%, var(--bg) 55%);
+      color:var(--text); font-family:var(--mono);
+      letter-spacing: .2px;
     }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #071426 0, #000 55%, #000 100%);
-      color: var(--text);
-      overflow: hidden;
+    .wrap{max-width:1000px; margin:0 auto; padding:26px 18px 60px;}
+    .header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      border:1px solid var(--border); background:linear-gradient(180deg, #0b160b, #070a07);
+      padding:16px 16px 14px; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);
     }
-
-    /* subtle scanline + grid effect */
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
+    .ascii{
+      white-space:pre; line-height:1.05; font-size:12px; color:var(--green);
+      text-shadow:0 0 18px rgba(93,255,120,.15);
+      margin:0;
     }
-
-    body::before {
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.04) 0,
-        rgba(255, 255, 255, 0.04) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-      mix-blend-mode: soft-light;
-      opacity: 0.25;
+    .meta{max-width:520px;}
+    h1{margin:0 0 8px; font-size:16px; color:var(--green); font-weight:700;}
+    .small{color:var(--muted); font-size:12px; line-height:1.4;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border:1px solid var(--border);
+      border-radius:999px; background:#081008; color:var(--muted);
+      font-size:12px; margin-top:10px;
     }
-
-    body::after {
-      background-image: linear-gradient(
-          rgba(37, 255, 107, 0.06) 1px,
-          transparent 1px
-        ),
-        linear-gradient(
-          90deg,
-          rgba(37, 255, 107, 0.06) 1px,
-          transparent 1px
-        );
-      background-size: 40px 40px;
-      opacity: 0.3;
+    .pill b{color:var(--text); font-weight:700;}
+    .grid{display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;}
+    .card{
+      border:1px solid var(--border); background:linear-gradient(180deg, #0a130a, #070a07);
+      border-radius:14px; padding:14px 14px 12px;
+      box-shadow:0 10px 26px rgba(0,0,0,.25);
+      position:relative;
     }
-
-    .wrapper {
-      position: relative;
-      max-width: 960px;
-      width: 100%;
-      padding: 2.5rem 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      border-radius: 1.5rem;
-      background: radial-gradient(circle at top left, #071325 0, #02050b 55%);
-      box-shadow:
-        0 0 40px rgba(0, 0, 0, 0.9),
-        0 0 80px rgba(37, 255, 107, 0.12);
-      border: 1px solid rgba(37, 255, 107, 0.25);
-      overflow: hidden;
+    .card.locked::before{
+      content:"LOCKED";
+      position:absolute; top:12px; right:12px;
+      color:rgba(255,214,93,.9);
+      border:1px solid rgba(255,214,93,.35);
+      padding:3px 8px; border-radius:999px; font-size:11px;
+      background:rgba(255,214,93,.06);
     }
-
-    .wrapper::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: conic-gradient(
-        from 200deg,
-        transparent 0deg,
-        transparent 220deg,
-        rgba(37, 255, 107, 0.35) 260deg,
-        transparent 300deg
-      );
-      opacity: 0.45;
-      filter: blur(28px);
-      z-index: -1;
-      animation: spin 18s linear infinite;
+    .card.done::before{
+      content:"CLEARED";
+      color:rgba(93,255,120,.9);
+      border:1px solid rgba(93,255,120,.35);
+      background:rgba(93,255,120,.06);
     }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+    .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px;}
+    .title{display:flex; gap:10px; align-items:baseline;}
+    .title h2{margin:0; font-size:14px; color:var(--text);}
+    .badge{font-size:11px; color:var(--muted); border:1px solid var(--border); padding:3px 8px; border-radius:999px; background:#081008;}
+    .desc{margin:8px 0 0; color:var(--muted); font-size:12px; line-height:1.45;}
+    label{font-size:12px; color:var(--muted);}
+    input{
+      width:min(520px, 100%);
+      background:#061006; color:var(--text);
+      border:1px solid var(--border); border-radius:10px;
+      padding:10px 10px; font-family:var(--mono);
+      outline:none;
     }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+    input:focus{border-color:#2a6a2a; box-shadow:0 0 0 3px rgba(93,255,120,.08);}
+    button{
+      background:linear-gradient(180deg, #0f1c0f, #081108);
+      color:var(--text); border:1px solid var(--border);
+      padding:10px 12px; border-radius:10px; cursor:pointer;
+      font-family:var(--mono); font-size:12px;
     }
-
-    .logo {
-      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-        "Courier New", monospace;
-      font-size: 1.2rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
+    button:hover{border-color:#2a6a2a;}
+    .ok{color:var(--green);}
+    .err{color:var(--red);}
+    .warn{color:var(--amber);}
+    .log{
+      margin-top:10px; font-size:12px; line-height:1.45;
+      background:#060c06; border:1px solid var(--border); border-radius:12px;
+      padding:10px; color:var(--muted);
+      white-space:pre-wrap;
     }
-
-    .logo span {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: none;
+    .hint{
+      margin-top:8px; padding:10px; border-radius:12px;
+      border:1px dashed #234523; background:rgba(93,255,120,.04);
+      color:var(--muted); font-size:12px; display:none;
     }
-
-    .status-pill {
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid var(--accent-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.75rem;
-      color: var(--muted);
-      background: rgba(4, 14, 20, 0.9);
-      backdrop-filter: blur(4px);
+    .hint.show{display:block;}
+    .footer{
+      margin-top:16px; color:var(--muted); font-size:12px; line-height:1.5;
+      border:1px solid var(--border); border-radius:14px; padding:14px; background:#070f07;
     }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
-      animation: pulse 1.2s ease-in-out infinite;
+    .final{
+      margin-top:14px;
+      border:1px solid rgba(93,255,120,.35);
+      background:rgba(93,255,120,.06);
+      border-radius:14px; padding:14px;
+      display:none;
     }
-
-    @keyframes pulse {
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.8;
-      }
-      50% {
-        transform: scale(1.4);
-        opacity: 1;
-      }
+    .final.show{display:block;}
+    .final h3{margin:0 0 8px; color:var(--green); font-size:14px;}
+    .final p{margin:0; color:var(--text); font-size:13px;}
+    .builder{
+      margin-top:14px; border:1px solid rgba(255,214,93,.35);
+      background:rgba(255,214,93,.06); border-radius:14px; padding:14px;
+      display:none;
     }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 860px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .terminal-card {
-      border-radius: 1.1rem;
-      background: radial-gradient(circle at top left, #061324 0, #050b18 60%);
-      border: 1px solid rgba(132, 255, 186, 0.35);
-      padding: 0;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.85);
-      position: relative;
-    }
-
-    .terminal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.45rem 0.95rem;
-      background: linear-gradient(
-        90deg,
-        rgba(4, 15, 25, 0.95),
-        rgba(5, 20, 36, 0.98)
-      );
-      border-bottom: 1px solid rgba(132, 255, 186, 0.25);
-      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-        "Courier New", monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .window-dots {
-      display: inline-flex;
-      gap: 0.3rem;
-      align-items: center;
-    }
-
-    .window-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #fff, #ff5f57);
-      opacity: 0.7;
-    }
-
-    .window-dot:nth-child(2) {
-      background: radial-gradient(circle at 30% 30%, #fff, #febc2e);
-    }
-
-    .window-dot:nth-child(3) {
-      background: radial-gradient(circle at 30% 30%, #fff, #28c840);
-    }
-
-    .terminal-title {
-      opacity: 0.9;
-    }
-
-    .terminal-body {
-      padding: 1rem 1rem 1.25rem;
-      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-        "Courier New", monospace;
-      font-size: 0.86rem;
-      line-height: 1.55;
-      background: radial-gradient(circle at top, #09162b 0, #050b18 55%);
-      color: var(--text);
-      position: relative;
-    }
-
-    .terminal-body::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(
-          rgba(0, 0, 0, 0.1) 1px,
-          transparent 1px
-        ),
-        linear-gradient(
-          90deg,
-          rgba(0, 0, 0, 0.05) 1px,
-          transparent 1px
-        );
-      background-size: 4px 4px;
-      mix-blend-mode: soft-light;
-      opacity: 0.55;
-      pointer-events: none;
-    }
-
-    #terminal-output {
-      position: relative;
-      min-height: 140px;
-      padding-bottom: 0.1rem;
-    }
-
-    .terminal-line {
-      position: relative;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .terminal-line + .terminal-line {
-      margin-top: 0.2rem;
-    }
-
-    .prompt {
-      color: var(--accent);
-      margin-right: 0.35rem;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 0.55em;
-      margin-left: 0.12rem;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
-      animation: blink 0.8s steps(1, end) infinite;
-    }
-
-    @keyframes blink {
-      0%,
-      49% {
-        opacity: 1;
-      }
-      50%,
-      100% {
-        opacity: 0;
-      }
-    }
-
-    .hidden {
-      opacity: 0;
-    }
-
-    .visible {
-      opacity: 1;
-      transition: opacity 0.4s ease-out;
-    }
-
-    .side-panel {
-      border-radius: 1.1rem;
-      background: radial-gradient(circle at top right, #041629 0, #050814 60%);
-      border: 1px solid rgba(81, 232, 150, 0.38);
-      padding: 1rem 1.1rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      font-size: 0.86rem;
-      box-shadow: 0 0 26px rgba(0, 0, 0, 0.85);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .side-panel::before {
-      content: "";
-      position: absolute;
-      inset: -20%;
-      background: radial-gradient(
-        circle at top,
-        rgba(37, 255, 107, 0.25),
-        transparent 55%
-      );
-      opacity: 0.5;
-      z-index: -1;
-    }
-
-    .side-heading {
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-    }
-
-    .hero-title {
-      font-size: 1.5rem;
-      line-height: 1.2;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .hero-title span {
-      color: var(--accent);
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .badge {
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid rgba(132, 255, 186, 0.5);
-      background: rgba(0, 0, 0, 0.25);
-      font-size: 0.72rem;
-      color: var(--muted);
-      backdrop-filter: blur(4px);
-      white-space: nowrap;
-    }
-
-    .accent {
-      color: var(--accent);
-    }
-
-    .actions {
-      margin-top: 0.3rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-    }
-
-    .btn {
-      padding: 0.5rem 0.85rem;
-      border-radius: 999px;
-      border: 1px solid var(--accent-soft);
-      background: rgba(0, 0, 0, 0.6);
-      color: var(--text);
-      font-size: 0.78rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      cursor: pointer;
-      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out,
-        background 0.1s ease-out, border-color 0.1s ease-out;
-    }
-
-    .btn.primary {
-      background: linear-gradient(
-        135deg,
-        rgba(37, 255, 107, 0.3),
-        rgba(6, 111, 50, 0.9)
-      );
-      border-color: rgba(37, 255, 107, 0.85);
-      box-shadow: 0 0 16px rgba(37, 255, 107, 0.4);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 18px rgba(37, 255, 107, 0.6);
-      border-color: rgba(37, 255, 107, 0.9);
-      background: linear-gradient(
-        135deg,
-        rgba(37, 255, 107, 0.45),
-        rgba(6, 111, 50, 1)
-      );
-    }
-
-    .btn span {
-      font-size: 0.9rem;
-    }
-
-    .footer {
-      margin-top: 0.3rem;
-      font-size: 0.72rem;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .footer strong {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    .hint {
-      opacity: 0.8;
-    }
+    .builder.show{display:block;}
+    .mono{font-family:var(--mono);}
+    code{color:var(--text);}
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="top-bar">
-      <div class="logo">
-        N4ZC4<span>// cyber ops lab</span>
+<div class="wrap">
+  <div class="header">
+    <div class="meta">
+      <h1>fsociety // RAM Xmas Vault</h1>
+      <div class="small">
+        9 mini-γρίφοι. Κάθε βήμα ζητά το αντίστοιχο <b>Key_i</b> (από τα προηγούμενα rooms) και μια απάντηση που <b>παράγεται</b> από αυτό το key.
+        Μόνο αφού περάσεις και τα 9, ανοίγει το τελικό μήνυμα.
       </div>
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        SYSTEM STATUS: ARMED &amp; MONITORED
-      </div>
+      <div class="pill"><span class="ok">●</span> Πρόοδος: <b id="progress">0/9</b> · Vault: <b id="vaultState" class="warn">LOCKED</b></div>
     </div>
-
-    <div class="layout">
-      <!-- Terminal area -->
-      <div class="terminal-card">
-        <div class="terminal-header">
-          <div class="window-dots">
-            <span class="window-dot"></span>
-            <span class="window-dot"></span>
-            <span class="window-dot"></span>
-          </div>
-          <div class="terminal-title">
-            n4zc4@cyber-lab: ~/defense/operations
-          </div>
-          <div></div>
-        </div>
-        <div class="terminal-body">
-          <div id="terminal-output"></div>
-
-          <div
-            id="prompt-line"
-            class="terminal-line hidden"
-            aria-hidden="true"
-          >
-            <span class="prompt">$</span>
-            <span> ./engage_defense.sh --mode=active --scope=internal</span>
-            <span class="cursor"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Side content -->
-      <aside class="side-panel">
-        <div class="side-heading">live perimeter overview</div>
-        <div class="hero-title">
-          Offensive mindset,
-          <span>defensive execution</span>.
-        </div>
-        <p>
-          This is a <span class="accent">demo interface</span> for a
-          cybersecurity lab / portfolio. Replace this text with your own intro,
-          tools, or links to reports, labs and writeups.
-        </p>
-        <div class="badge-row">
-          <span class="badge">↳ Threat monitoring online</span>
-          <span class="badge">↳ SIEM feed: healthy</span>
-          <span class="badge">↳ IDS signatures: updated</span>
-          <span class="badge">↳ VPN: enforced</span>
-        </div>
-        <div class="actions">
-          <!-- Change these hrefs to your links -->
-          <a class="btn primary" href="https://github.com/N4ZC4/ram/blob/main/Steganography.png"
-            ><span>View lab notes</span></a
-          >
-          <a class="btn" href="https://github.com/N4ZC4/ram/blob/main/Steganography.png"
-            ><span>Open report archive</span></a
-          >
-        </div>
-      </aside>
-    </div>
-
-    <div class="footer">
-      <div>
-        for training and defense only · <strong>stay ethical</strong>
-      </div>
-      <div class="hint">
-        tip: include this file in your GitHub Pages repo as <code>index.html</code>
-      </div>
-    </div>
+<pre class="ascii">
+   _____               _      _         
+  |  ___|__  ___  ___ (_) ___| |_ _   _ 
+  | |_ / _ \/ __|/ __|| |/ _ \ __| | | |
+  |  _| (_) \__ \ (__ | |  __/ |_| |_| |
+  |_|  \___/|___/\___||_|\___|\__|\__, |
+                                   |___/
+</pre>
   </div>
 
-  <script>
-    // Simple typewriter effect for fake terminal output
-    const lines = [
-      "Booting N4ZC4 Secure Environment v1.0.3...",
-      "Loading modules: recon, intel, incident-response, reporting...",
-      "Calibrating network sensors and telemetry taps...",
-      "Linking to SIEM: OK    |    Threat intel feeds: OK",
-      "Hardening perimeter policies and updating firewall rules...",
-      "Status: READY. Awaiting next engagement..."
-    ];
+  <div id="builder" class="builder">
+    <div class="title"><h2>Instructor Builder</h2><span class="badge">μόνο για εσένα (άνοιξε με ?build=1)</span></div>
+    <div class="desc">
+      Paste εδώ τα 9 keys (ένα ανά γραμμή). Θα σου βγάλει τα SHA-256 hashes για να τα βάλεις στο <code>CONFIG.keyHashes</code>.
+      Μετά, <b>σβήσε/κρύψε το Builder</b> πριν το publish, αν θέλεις.
+    </div>
+    <div class="row">
+      <input id="keysPaste" placeholder="KEY1&#10;KEY2&#10;...&#10;KEY9" style="height:120px" />
+    </div>
+    <div class="row">
+      <button id="btnBuild">Generate keyHashes</button>
+    </div>
+    <div class="log" id="buildOut"></div>
+  </div>
 
-    const output = document.getElementById("terminal-output");
-    const promptLine = document.getElementById("prompt-line");
-    let lineIndex = 0;
-    let charIndex = 0;
+  <div class="grid" id="rooms"></div>
 
-    function typeLine() {
-      if (lineIndex >= lines.length) {
-        // Reveal the fake prompt when we're done typing lines
-        promptLine.classList.remove("hidden");
-        promptLine.classList.add("visible");
-        return;
-      }
+  <div class="final" id="finalBox">
+    <h3>Vault Unlocked</h3>
+    <p id="finalMsg"></p>
+  </div>
 
-      const currentLine = lines[lineIndex];
-      const lineId = "term-line-" + lineIndex;
-      let lineElement = document.getElementById(lineId);
+  <div class="footer">
+    <b>Σημείωση:</b> Οι γρίφοι είναι φτιαγμένοι για “hands-on” σκέψη (base64, hex, Caesar, hash tail, base32, pattern logic κ.λπ.).
+    Αν κάποιος έχει μόνο τα keys αλλά δεν κάνει σωστά τους μετασχηματισμούς, δεν περνάει.
+  </div>
+</div>
 
-      if (!lineElement) {
-        lineElement = document.createElement("div");
-        lineElement.id = lineId;
-        lineElement.className = "terminal-line";
-        output.appendChild(lineElement);
-      }
+<script>
+/**
+ * ===========================
+ * CONFIG — συμπλήρωσέ το
+ * ===========================
+ * Βάλε εδώ τα SHA-256 (hex) των 9 keys.
+ * Αν δεν τα έχεις έτοιμα, άνοιξε τη σελίδα με ?build=1 και χρησιμοποίησε τον Builder.
+ */
+const CONFIG = {
+  // 9 x SHA-256 hex digests (lowercase). Placeholder values below:
+  keyHashes: [
+    "PUT_SHA256_OF_KEY1_HERE",
+    "PUT_SHA256_OF_KEY2_HERE",
+    "PUT_SHA256_OF_KEY3_HERE",
+    "PUT_SHA256_OF_KEY4_HERE",
+    "PUT_SHA256_OF_KEY5_HERE",
+    "PUT_SHA256_OF_KEY6_HERE",
+    "PUT_SHA256_OF_KEY7_HERE",
+    "PUT_SHA256_OF_KEY8_HERE",
+    "PUT_SHA256_OF_KEY9_HERE",
+  ],
+  // για το τελικό “obfuscation”
+  vaultSalt: "ram|xmas|fsociety|athens",
+};
 
-      // Prepend a pseudo prompt for each line
-      const visibleText = currentLine.slice(0, charIndex + 1);
-      lineElement.textContent = "> " + visibleText;
+/**
+ * ===========================
+ * Helpers
+ * ===========================
+ */
+const $ = (id) => document.getElementById(id);
 
-      charIndex++;
-
-      if (charIndex >= currentLine.length) {
-        charIndex = 0;
-        lineIndex++;
-        setTimeout(typeLine, 420); // pause between lines
-      } else {
-        setTimeout(typeLine, 32); // typing speed
-      }
+function normalizeKey(s){
+  return (s || "").trim();
+}
+function normalizeAnswer(s){
+  return (s || "").trim();
+}
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  const arr = Array.from(new Uint8Array(buf));
+  return arr.map(b => b.toString(16).padStart(2,"0")).join("");
+}
+function toHexAscii(str){
+  return Array.from(str).map(ch => ch.charCodeAt(0).toString(16).padStart(2,"0")).join("").toUpperCase();
+}
+function b64NoPad(str){
+  // btoa works for ASCII; keys here are expected A–Z/0–9 style. If you use unicode keys, adapt.
+  return btoa(str).replace(/=+$/,"");
+}
+function caesarLetters(str, shift){
+  const A=65, Z=90;
+  return Array.from(str).map(ch=>{
+    const c = ch.charCodeAt(0);
+    if(c>=A && c<=Z){
+      return String.fromCharCode(((c-A+shift)%26)+A);
     }
+    const a=97, z=122;
+    if(c>=a && c<=z){
+      return String.fromCharCode(((c-a+shift)%26)+a);
+    }
+    return ch;
+  }).join("");
+}
+function reorder246135(str){
+  // 1-based indices: 2,4,6,1,3,5
+  const s = str;
+  const idx = [1,3,5,0,2,4]; // 0-based
+  if(s.length < 6) return s; // fail-soft
+  return idx.map(i=>s[i] ?? "").join("");
+}
+function sortKey(str){
+  return Array.from(str).sort((a,b)=>a.localeCompare(b)).join("");
+}
+function rotateRight(str, k){
+  if(!str.length) return str;
+  const n = str.length;
+  const r = ((k % n) + n) % n;
+  return str.slice(n-r) + str.slice(0, n-r);
+}
+function digitSum(str){
+  let sum=0;
+  for(const ch of str){
+    if(ch>="0" && ch<="9") sum += (ch.charCodeAt(0)-48);
+  }
+  return sum;
+}
+// RFC4648 Base32 encode (no padding)
+function base32Encode(str){
+  const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  const bytes = new TextEncoder().encode(str);
+  let bits=0, value=0, output="";
+  for(const b of bytes){
+    value = (value<<8) | b;
+    bits += 8;
+    while(bits >= 5){
+      output += alphabet[(value >>> (bits-5)) & 31];
+      bits -= 5;
+    }
+  }
+  if(bits > 0){
+    output += alphabet[(value << (5-bits)) & 31];
+  }
+  return output; // no '=' padding
+}
 
-    window.addEventListener("load", function () {
-      setTimeout(typeLine, 550);
+/**
+ * ===========================
+ * Riddles (9)
+ * Κάθε riddle: description + expected answer derived from the key.
+ * ===========================
+ */
+const RIDDLES = [
+  {
+    title: "01 — Order in the Dark",
+    difficulty: "Medium",
+    story: "Ο Elliot είπε: “Ό,τι είναι χαοτικό, πρώτα το βάζεις σε σειρά.”",
+    instruction: "Πάρε το KEY1 και ταξινόμησε τους χαρακτήρες αλφαριθμητικά (A–Z, 0–9). Γράψε το αποτέλεσμα.",
+    hint: "Παράδειγμα: Z1A9BC → 19ABCZ",
+    expected: async (key) => sortKey(key),
+  },
+  {
+    title: "02 — Dead Code Speaks",
+    difficulty: "Medium–Hard",
+    story: "Ό,τι φαίνεται ‘νεκρό’, συχνά κρύβει το πραγματικό μήνυμα.",
+    instruction: "Πάρε το KEY2 και γράψ’ το ανάποδα (reverse).",
+    hint: "Αν KEY2=ABC123 → 321CBA",
+    expected: async (key) => Array.from(key).reverse().join(""),
+  },
+  {
+    title: "03 — Received: Trust the Chain",
+    difficulty: "Hard",
+    story: "Τα headers δεν λένε ψέματα, αν ξέρεις ποιο layer να εμπιστευτείς.",
+    instruction: "Πάρε το KEY3 και κάνε reorder: θέσεις 2-4-6-1-3-5 (1-based).",
+    hint: "Δες το σαν ‘even indices first’ και μετά τα odd.",
+    expected: async (key) => reorder246135(key),
+  },
+  {
+    title: "04 — The Caesar Echo",
+    difficulty: "Hard",
+    story: "Κάποιος γέλασε: “Τα κλασικά δουλεύουν γιατί είναι απλά.”",
+    instruction: "Πάρε το KEY4 και κάνε Caesar shift +3 σε γράμματα (A→D). Τα digits μένουν ίδια.",
+    hint: "XYZ123 → ABC123",
+    expected: async (key) => caesarLetters(key, 3),
+  },
+  {
+    title: "05 — Policy Verification",
+    difficulty: "Hard",
+    story: "Δεν αρκεί να ‘φαίνεται σωστό’. Πρέπει να αποδεικνύεται.",
+    instruction: "Υπολόγισε SHA-256(KEY5) και γράψε τα ΠΡΩΤΑ 6 hex chars του digest (lowercase).",
+    hint: "Θέλεις output τύπου: a1b2c3",
+    expected: async (key) => (await sha256Hex(key)).slice(0, 6),
+  },
+  {
+    title: "06 — Encoded Command",
+    difficulty: "Hard",
+    story: "Κάποιος έκρυψε εντολές σε ‘αθώο’ encoding.",
+    instruction: "Κάνε Base64(KEY6) χωρίς '=' padding και γράψε τα ΤΕΛΕΥΤΑΙΑ 6 chars του base64 string.",
+    hint: "Το αποτέλεσμα είναι 6 χαρακτήρες. Πρόσεξε: χωρίς '='.",
+    expected: async (key) => {
+      const b = b64NoPad(key);
+      return b.slice(-6);
+    },
+  },
+  {
+    title: "07 — DNS Whispers",
+    difficulty: "Very Hard",
+    story: "Το DNS κουβαλάει δεδομένα όταν κανείς δεν κοιτάει προσεκτικά.",
+    instruction: "Κάνε Base32(KEY7) (RFC4648, χωρίς padding) και γράψε τους ΠΡΩΤΟΥΣ 6 χαρακτήρες.",
+    hint: "Base32 alphabet: A–Z και 2–7.",
+    expected: async (key) => base32Encode(key).slice(0, 6),
+  },
+  {
+    title: "08 — Text Hidden in Plain Sight",
+    difficulty: "Hard",
+    story: "Τα metadata κρύβουν περισσότερα απ’ όσα νομίζεις.",
+    instruction: "Μετέτρεψε το KEY8 σε HEX ASCII (2 hex ανά χαρακτήρα) και γράψε ΜΟΝΟ τα 6 ΠΡΩΤΑ hex digits.",
+    hint: "Output μόνο 6 χαρακτήρες (hex). Παράδειγμα: 'AB' → 4142...",
+    expected: async (key) => toHexAscii(key).slice(0, 6).toLowerCase(),
+  },
+  {
+    title: "09 — Ticket Granting Shift",
+    difficulty: "Very Hard",
+    story: "Το ticket σε πάει εκεί που πρέπει, αν κρατήσεις σωστή σειρά.",
+    instruction: "Υπολόγισε το άθροισμα των digits στο KEY9. Κάνε rotate-right το KEY9 κατά (sumDigits mod 6). Γράψε το rotated key.",
+    hint: "Αν sumDigits=7 και μήκος=6 → rotate-right κατά 1.",
+    expected: async (key) => {
+      const r = digitSum(key) % (key.length || 1);
+      return rotateRight(key, r);
+    },
+  },
+];
+
+// Minimal “obfuscation” for final message (not plain-text in source).
+// It will reveal only after all rooms cleared.
+function revealFinalMessage(){
+  // "Merry Hacking Christmas" XOR 0x17
+  const bytes = [
+    0x5a,0x72,0x65,0x65,0x6e,0x37,0x5f,0x76,0x74,0x7c,0x7e,0x79,0x37,0x54,0x65,0x65,0x7e,0x64,0x63,0x7a,0x64
+  ];
+  const plain = bytes.map(b => String.fromCharCode(b ^ 0x17)).join("");
+  $("finalMsg").textContent = plain;
+  $("finalBox").classList.add("show");
+  $("vaultState").textContent = "UNLOCKED";
+  $("vaultState").classList.remove("warn");
+  $("vaultState").classList.add("ok");
+}
+
+/**
+ * ===========================
+ * UI / Flow
+ * ===========================
+ */
+const state = {
+  cleared: Array(9).fill(false),
+  keys: Array(9).fill(""),
+};
+
+function updateProgress(){
+  const done = state.cleared.filter(Boolean).length;
+  $("progress").textContent = `${done}/9`;
+  if(done === 9){
+    revealFinalMessage();
+  }
+}
+
+function cardTemplate(i){
+  const r = RIDDLES[i];
+  return `
+    <div class="card locked" id="card-${i}">
+      <div class="title">
+        <h2>${r.title}</h2>
+        <span class="badge">${r.difficulty}</span>
+      </div>
+      <div class="desc">${r.story}</div>
+      <div class="desc"><b>Γρίφος:</b> ${r.instruction}</div>
+
+      <div class="row" style="margin-top:12px">
+        <div style="flex:1; min-width:240px">
+          <label for="key-${i}">Key ${i+1}</label><br/>
+          <input id="key-${i}" placeholder="π.χ. 6–12 chars (όπως το key σου)" autocomplete="off" />
+        </div>
+        <div style="flex:1; min-width:240px">
+          <label for="ans-${i}">Απάντηση</label><br/>
+          <input id="ans-${i}" placeholder="το αποτέλεσμα του γρίφου" autocomplete="off" />
+        </div>
+        <div style="display:flex; gap:8px; align-items:flex-end">
+          <button id="btn-${i}">Verify</button>
+          <button id="hintBtn-${i}">Hint</button>
+        </div>
+      </div>
+
+      <div class="hint" id="hint-${i}">${r.hint}</div>
+      <div class="log" id="log-${i}">Status: LOCKED</div>
+    </div>
+  `;
+}
+
+async function verifyRoom(i){
+  const key = normalizeKey($(`key-${i}`).value);
+  const ans = normalizeAnswer($(`ans-${i}`).value);
+
+  const log = $(`log-${i}`);
+  const card = $(`card-${i}`);
+
+  if(!key || !ans){
+    log.innerHTML = `Status: <span class="err">missing input</span>\n- χρειάζεται Key και Απάντηση`;
+    return;
+  }
+
+  // Key validation via SHA-256 hash
+  const h = await sha256Hex(key);
+  const expectedKeyHash = (CONFIG.keyHashes[i] || "").toLowerCase().trim();
+  if(!expectedKeyHash || expectedKeyHash.includes("PUT_SHA256")){
+    log.innerHTML = `Status: <span class="warn">config incomplete</span>\n- συμπλήρωσε CONFIG.keyHashes[${i}]`;
+    return;
+  }
+  if(h !== expectedKeyHash){
+    log.innerHTML = `Status: <span class="err">invalid key</span>\n- το Key ${i+1} δεν ταιριάζει`;
+    return;
+  }
+
+  // Answer validation computed from the key
+  const expectedAnswer = await RIDDLES[i].expected(key);
+  const ok = (ans === expectedAnswer);
+
+  if(!ok){
+    log.innerHTML = `Status: <span class="err">wrong answer</span>\n- Το key είναι σωστό, αλλά ο μετασχηματισμός/απάντηση όχι.\n- Tip: δες το Hint.`;
+    return;
+  }
+
+  // Mark cleared
+  state.cleared[i] = true;
+  state.keys[i] = key;
+
+  card.classList.remove("locked");
+  card.classList.add("done");
+  log.innerHTML = `Status: <span class="ok">cleared</span>\nFlag unlocked for this step.`;
+  updateProgress();
+}
+
+function mountRooms(){
+  const container = $("rooms");
+  container.innerHTML = RIDDLES.map((_,i)=>cardTemplate(i)).join("");
+
+  for(let i=0;i<9;i++){
+    $(`btn-${i}`).addEventListener("click", ()=>verifyRoom(i));
+    $(`hintBtn-${i}`).addEventListener("click", ()=>{
+      $(`hint-${i}`).classList.toggle("show");
     });
-  </script>
+  }
+  updateProgress();
+}
+
+/**
+ * ===========================
+ * Builder (?build=1)
+ * ===========================
+ */
+function isBuildMode(){
+  const u = new URL(location.href);
+  return u.searchParams.get("build") === "1";
+}
+
+async function runBuilder(){
+  $("builder").classList.add("show");
+  $("btnBuild").addEventListener("click", async ()=>{
+    const raw = ($("keysPaste").value || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(raw.length !== 9){
+      $("buildOut").textContent = `Need exactly 9 keys (one per line). Found: ${raw.length}`;
+      return;
+    }
+    const hashes = [];
+    for(const k of raw){
+      hashes.push(await sha256Hex(k));
+    }
+    $("buildOut").textContent =
+      "Paste this into CONFIG.keyHashes:\n\n" +
+      JSON.stringify(hashes, null, 2) +
+      "\n\n(Then remove ?build=1 and optionally remove the Builder block before publishing.)";
+  });
+}
+
+/**
+ * ===========================
+ * Boot
+ * ===========================
+ */
+(async function init(){
+  mountRooms();
+  if(isBuildMode()){
+    await runBuilder();
+  }
+})();
+</script>
 </body>
 </html>
