@@ -129,35 +129,25 @@
 </div>
 
 <script>
-/* ======================
-   CONFIG — ΑΛΛΑΖΕΙΣ ΜΟΝΟ ΕΔΩ
-   ====================== */
-const CONFIG = {
-  // Βάλε εδώ 9 SHA-256 hex digests (lowercase) για τα keys/shards S1..S9
-  // (Use builder mode ?build=1)
-  keyHashes: [
-    "PUT_SHA256_OF_S1_HERE",
-    "PUT_SHA256_OF_S2_HERE",
-    "PUT_SHA256_OF_S3_HERE",
-    "PUT_SHA256_OF_S4_HERE",
-    "PUT_SHA256_OF_S5_HERE",
-    "PUT_SHA256_OF_S6_HERE",
-    "PUT_SHA256_OF_S7_HERE",
-    "PUT_SHA256_OF_S8_HERE",
-    "PUT_SHA256_OF_S9_HERE",
-  ],
-  // Salt που θα “αποκαλυφθεί” μέσω σεντουκιού (το master string τη χρειάζεται)
-  salt: "redwheelbarrow",
-  // Base64 του Google Sheet URL (ώστε να μην είναι ωμό στο source)
-  // π.χ. btoa("https://docs.google.com/spreadsheets/d/....")
-  sheetUrlB64: "PUT_BASE64_SHEET_URL_HERE",
-};
 
-/* ======================
-   Data model
-   ====================== */
-const ORDER = ["S2","S4","S6","S8","S1","S3","S5","S7","S9"]; // EVENS then ODDS
-const IDS   = ["S1","S2","S3","S4","S5","S6","S7","S8","S9"]; // for chest indexing
+const CONFIG = {
+
+  keyHashes: [
+    "15b946fadee00d538bb6427e7cce6af3c090dc6b91d992b1c25863184c99123c",
+    "ddca4d8d6bb244c7d870847598f263aa57ba2ca8abcb3ffd391870dd36f64b6d",
+    "5c6eaf25251ae7e193c078c4a63d8ee72ee2ba5d5b4cbc782d5d956da9f4b5dd",
+    "bb1725c9f2f92e3f83ed4f5e8e3b33805e13f343f7216254f684c0ba70d2053e",
+    "6fd61b7f86d2aca9dd9da6a6caf7a13c81232d4d9d1412b3de540076a7160837",
+    "bddb1134c23604c9b7007349120f6010fe24a421f26939807ee1088192abfa42",
+    "009e5094840931377915e3aa3989622d55073218ae7fb4e9508a8083626483d2",
+    "793797d875183f977de23cb0a6af131155d478e5f846d3858fbd41b4da6c16b6",
+    "ea503a2d5d25aef48e446427a884a36b7d58c666414474e28e8ac03b959a58d3",
+  ],
+  salt: "redwheelbarrow",
+  sheetUrlB64: "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvMWdCTHpiR3ZPTnhmZFRmNGlnSWktb2dFbjF5Qlg5cWl5UTBmX0FJazlCYzAvZWRpdD91c3A9c2hhcmluZw==",
+};
+const ORDER = ["S2","S4","S6","S8","S1","S3","S5","S7","S9"]; 
+const IDS   = ["S1","S2","S3","S4","S5","S6","S7","S8","S9"]; 
 
 const CLUES = {
   S1: "Σημείωση #1: Οι ‘μονές’ έρχονται ΜΕΤΑ. (ODDS later.)",
@@ -277,7 +267,6 @@ async function unlockChest(id, idx){
 }
 
 async function expectedFlagFromKeys(){
-  // build master: fsociety|<S2>|<S4>|...|<S9>|<salt>
   const shards = ORDER.map(k => state.keys[k] || "");
   if(shards.some(s => !s)) return "";
 
@@ -311,7 +300,7 @@ async function submitFlag(){
     return;
   }
 
-  // Success
+ 
   log.innerHTML = `Status: <span class="ok">correct</span>`;
   const url = b64Decode(CONFIG.sheetUrlB64);
   if(!url || url.startsWith("PUT_")){
@@ -323,9 +312,7 @@ async function submitFlag(){
   $("reward").style.display = "block";
 }
 
-/* ======================
-   Builder mode (?build=1)
-   ====================== */
+
 function isBuildMode(){
   const u = new URL(location.href);
   return u.searchParams.get("build") === "1";
