@@ -3,491 +3,329 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAM | Mr. Robot Xmas Vault</title>
+  <title>RAM | Final Boss</title>
   <style>
     :root{
       --bg:#070a07; --panel:#0b120b; --text:#cfe8cf; --muted:#86a186;
-      --green:#5dff78; --green2:#2bbf44; --red:#ff5d5d; --amber:#ffd65d;
-      --border:#173017;
+      --green:#5dff78; --amber:#ffd65d; --red:#ff5d5d; --border:#173017;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
-    html,body{height:100%;}
-    body{
-      margin:0; background:radial-gradient(1200px 700px at 20% 10%, #0b160b 0%, var(--bg) 55%);
-      color:var(--text); font-family:var(--mono);
-      letter-spacing: .2px;
+    body{margin:0; background:radial-gradient(1100px 600px at 25% 10%, #0b160b 0%, var(--bg) 55%);
+      color:var(--text); font-family:var(--mono); letter-spacing:.2px;}
+    .wrap{max-width:1100px; margin:0 auto; padding:22px 16px 60px;}
+    .top{border:1px solid var(--border); background:linear-gradient(180deg,#0b160b,#070a07);
+      border-radius:16px; padding:14px 14px 12px; box-shadow:0 10px 28px rgba(0,0,0,.35);}
+    h1{margin:0 0 6px; font-size:16px; color:var(--green);}
+    .sub{color:var(--muted); font-size:12px; line-height:1.45;}
+    .pill{display:inline-flex; gap:10px; align-items:center; margin-top:10px;
+      border:1px solid var(--border); background:#081008; padding:6px 10px; border-radius:999px; font-size:12px; color:var(--muted);}
+    .pill b{color:var(--text);}
+    .grid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:14px;}
+    @media (max-width:900px){.grid{grid-template-columns:repeat(2, minmax(0, 1fr));}}
+    @media (max-width:560px){.grid{grid-template-columns:1fr;}}
+    .card{border:1px solid var(--border); background:linear-gradient(180deg,#0a130a,#070a07);
+      border-radius:16px; padding:12px; box-shadow:0 10px 22px rgba(0,0,0,.25); position:relative;}
+    .card.locked::before{content:"LOCKED"; position:absolute; top:10px; right:10px; font-size:11px;
+      color:rgba(255,214,93,.95); border:1px solid rgba(255,214,93,.35); background:rgba(255,214,93,.06);
+      padding:3px 8px; border-radius:999px;}
+    .card.open::before{content:"OPEN"; color:rgba(93,255,120,.95); border:1px solid rgba(93,255,120,.35);
+      background:rgba(93,255,120,.06);}
+    .head{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+    .title{margin:0; font-size:13px;}
+    .tag{font-size:11px; color:var(--muted); border:1px solid var(--border); background:#081008; padding:3px 8px; border-radius:999px;}
+    .chest{
+      margin-top:10px; border:1px dashed #234523; background:rgba(93,255,120,.035);
+      border-radius:14px; padding:10px; color:var(--muted); font-size:12px; line-height:1.45;
     }
-    .wrap{max-width:1000px; margin:0 auto; padding:26px 18px 60px;}
-    .header{
-      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
-      border:1px solid var(--border); background:linear-gradient(180deg, #0b160b, #070a07);
-      padding:16px 16px 14px; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    .ascii{
-      white-space:pre; line-height:1.05; font-size:12px; color:var(--green);
-      text-shadow:0 0 18px rgba(93,255,120,.15);
-      margin:0;
-    }
-    .meta{max-width:520px;}
-    h1{margin:0 0 8px; font-size:16px; color:var(--green); font-weight:700;}
-    .small{color:var(--muted); font-size:12px; line-height:1.4;}
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px; border:1px solid var(--border);
-      border-radius:999px; background:#081008; color:var(--muted);
-      font-size:12px; margin-top:10px;
-    }
-    .pill b{color:var(--text); font-weight:700;}
-    .grid{display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;}
-    .card{
-      border:1px solid var(--border); background:linear-gradient(180deg, #0a130a, #070a07);
-      border-radius:14px; padding:14px 14px 12px;
-      box-shadow:0 10px 26px rgba(0,0,0,.25);
-      position:relative;
-    }
-    .card.locked::before{
-      content:"LOCKED";
-      position:absolute; top:12px; right:12px;
-      color:rgba(255,214,93,.9);
-      border:1px solid rgba(255,214,93,.35);
-      padding:3px 8px; border-radius:999px; font-size:11px;
-      background:rgba(255,214,93,.06);
-    }
-    .card.done::before{
-      content:"CLEARED";
-      color:rgba(93,255,120,.9);
-      border:1px solid rgba(93,255,120,.35);
-      background:rgba(93,255,120,.06);
-    }
-    .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px;}
-    .title{display:flex; gap:10px; align-items:baseline;}
-    .title h2{margin:0; font-size:14px; color:var(--text);}
-    .badge{font-size:11px; color:var(--muted); border:1px solid var(--border); padding:3px 8px; border-radius:999px; background:#081008;}
-    .desc{margin:8px 0 0; color:var(--muted); font-size:12px; line-height:1.45;}
     label{font-size:12px; color:var(--muted);}
     input{
-      width:min(520px, 100%);
-      background:#061006; color:var(--text);
-      border:1px solid var(--border); border-radius:10px;
-      padding:10px 10px; font-family:var(--mono);
-      outline:none;
+      width:100%; background:#061006; color:var(--text);
+      border:1px solid var(--border); border-radius:12px; padding:10px; outline:none; font-family:var(--mono);
     }
     input:focus{border-color:#2a6a2a; box-shadow:0 0 0 3px rgba(93,255,120,.08);}
+    .row{display:flex; gap:8px; align-items:flex-end; margin-top:10px;}
     button{
-      background:linear-gradient(180deg, #0f1c0f, #081108);
+      background:linear-gradient(180deg,#0f1c0f,#081108);
       color:var(--text); border:1px solid var(--border);
-      padding:10px 12px; border-radius:10px; cursor:pointer;
-      font-family:var(--mono); font-size:12px;
+      padding:10px 12px; border-radius:12px; cursor:pointer; font-family:var(--mono); font-size:12px;
+      white-space:nowrap;
     }
     button:hover{border-color:#2a6a2a;}
-    .ok{color:var(--green);}
-    .err{color:var(--red);}
-    .warn{color:var(--amber);}
-    .log{
-      margin-top:10px; font-size:12px; line-height:1.45;
-      background:#060c06; border:1px solid var(--border); border-radius:12px;
-      padding:10px; color:var(--muted);
-      white-space:pre-wrap;
-    }
-    .hint{
-      margin-top:8px; padding:10px; border-radius:12px;
-      border:1px dashed #234523; background:rgba(93,255,120,.04);
-      color:var(--muted); font-size:12px; display:none;
-    }
-    .hint.show{display:block;}
-    .footer{
-      margin-top:16px; color:var(--muted); font-size:12px; line-height:1.5;
-      border:1px solid var(--border); border-radius:14px; padding:14px; background:#070f07;
-    }
-    .final{
-      margin-top:14px;
-      border:1px solid rgba(93,255,120,.35);
-      background:rgba(93,255,120,.06);
-      border-radius:14px; padding:14px;
-      display:none;
-    }
+    .log{margin-top:10px; font-size:12px; background:#060c06; border:1px solid var(--border);
+      border-radius:12px; padding:10px; color:var(--muted); white-space:pre-wrap;}
+    .ok{color:var(--green);} .warn{color:var(--amber);} .err{color:var(--red);}
+    .final{margin-top:14px; border:1px solid rgba(93,255,120,.35); background:rgba(93,255,120,.06);
+      border-radius:16px; padding:14px; display:none;}
     .final.show{display:block;}
-    .final h3{margin:0 0 8px; color:var(--green); font-size:14px;}
-    .final p{margin:0; color:var(--text); font-size:13px;}
-    .builder{
-      margin-top:14px; border:1px solid rgba(255,214,93,.35);
-      background:rgba(255,214,93,.06); border-radius:14px; padding:14px;
-      display:none;
-    }
+    .final h2{margin:0 0 8px; font-size:14px; color:var(--green);}
+    .final .riddle{color:var(--muted); font-size:12px; line-height:1.5;}
+    .final .riddle ul{margin:8px 0 0 18px; padding:0;}
+    .final .riddle li{margin:4px 0;}
+    .builder{margin-top:14px; border:1px solid rgba(255,214,93,.35); background:rgba(255,214,93,.06);
+      border-radius:16px; padding:14px; display:none;}
     .builder.show{display:block;}
-    .mono{font-family:var(--mono);}
-    code{color:var(--text);}
+    textarea{
+      width:100%; min-height:130px; background:#061006; color:var(--text);
+      border:1px solid var(--border); border-radius:12px; padding:10px; outline:none; font-family:var(--mono);
+    }
+    a{color:var(--green); text-decoration:none;}
+    a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="header">
-    <div class="meta">
-      <h1>fsociety // RAM Xmas Vault</h1>
-      <div class="small">
-        9 mini-γρίφοι. Κάθε βήμα ζητά το αντίστοιχο <b>Key_i</b> (από τα προηγούμενα rooms) και μια απάντηση που <b>παράγεται</b> από αυτό το key.
-        Μόνο αφού περάσεις και τα 9, ανοίγει το τελικό μήνυμα.
-      </div>
-      <div class="pill"><span class="ok">●</span> Πρόοδος: <b id="progress">0/9</b> · Vault: <b id="vaultState" class="warn">LOCKED</b></div>
+  <div class="top">
+    <h1>fsociety // Final Boss</h1>
+    <div class="sub">
+      9 σεντούκια. 9 κλειδιά. Κάθε ξεκλείδωμα αποκαλύπτει ένα κομμάτι του τελικού γρίφου.
+      Μόλις ανοίξουν όλα, θα χρειαστεί να βγάλεις το τελικό <b>flag</b>. Με το σωστό flag θα εμφανιστεί ο σύνδεσμος “δήλωσης”.
     </div>
-<pre class="ascii">
-   _____               _      _         
-  |  ___|__  ___  ___ (_) ___| |_ _   _ 
-  | |_ / _ \/ __|/ __|| |/ _ \ __| | | |
-  |  _| (_) \__ \ (__ | |  __/ |_| |_| |
-  |_|  \___/|___/\___||_|\___|\__|\__, |
-                                   |___/
-</pre>
+    <div class="pill"><span class="ok">●</span> Πρόοδος: <b id="prog">0/9</b> · Vault: <b id="vault" class="warn">LOCKED</b></div>
   </div>
 
+  <!-- Instructor builder (use ?build=1) -->
   <div id="builder" class="builder">
-    <div class="title"><h2>Instructor Builder</h2><span class="badge">μόνο για εσένα (άνοιξε με ?build=1)</span></div>
-    <div class="desc">
-      Paste εδώ τα 9 keys (ένα ανά γραμμή). Θα σου βγάλει τα SHA-256 hashes για να τα βάλεις στο <code>CONFIG.keyHashes</code>.
-      Μετά, <b>σβήσε/κρύψε το Builder</b> πριν το publish, αν θέλεις.
-    </div>
-    <div class="row">
-      <input id="keysPaste" placeholder="KEY1&#10;KEY2&#10;...&#10;KEY9" style="height:120px" />
-    </div>
+    <div class="sub"><b>Instructor Builder</b> — άνοιξε τη σελίδα με <code>?build=1</code>, κάνε paste τα 9 keys (ένα ανά γραμμή) και πάρε έτοιμο JSON για <code>CONFIG.keyHashes</code>.</div>
+    <div style="margin-top:10px"><textarea id="keysIn" placeholder="KEY1&#10;KEY2&#10;...&#10;KEY9"></textarea></div>
     <div class="row">
       <button id="btnBuild">Generate keyHashes</button>
     </div>
-    <div class="log" id="buildOut"></div>
+    <div class="log" id="buildOut">Waiting…</div>
   </div>
 
-  <div class="grid" id="rooms"></div>
+  <div class="grid" id="chests"></div>
 
-  <div class="final" id="finalBox">
-    <h3>Vault Unlocked</h3>
-    <p id="finalMsg"></p>
-  </div>
+  <div class="final" id="final">
+    <h2>Final Riddle</h2>
+    <div class="riddle">
+      Έχεις πλέον όλα τα κομμάτια. Το τελικό flag προκύπτει από τα 9 shards που έδωσαν τα rooms.
+      <ul>
+        <li><b>Splice Order</b>: “EVENS first, ODDS later”.</li>
+        <li>Το master string ξεκινά με <code>fsociety|</code> και χρησιμοποιεί <code>|</code> ως separator (χωρίς κενά).</li>
+        <li>Στο τέλος προσθέτεις το “salt” που έμαθες από τα σεντούκια.</li>
+        <li>Υπολογίζεις <b>SHA-256</b> του master string (UTF-8).</li>
+        <li>Παίρνεις τα <b>πρώτα 12</b> hex (UPPERCASE).</li>
+        <li>Flag format: <code>RAM{XMAS_&lt;12HEX&gt;}</code></li>
+      </ul>
+    </div>
 
-  <div class="footer">
-    <b>Σημείωση:</b> Οι γρίφοι είναι φτιαγμένοι για “hands-on” σκέψη (base64, hex, Caesar, hash tail, base32, pattern logic κ.λπ.).
-    Αν κάποιος έχει μόνο τα keys αλλά δεν κάνει σωστά τους μετασχηματισμούς, δεν περνάει.
+    <div class="row">
+      <div style="flex:1; min-width:260px;">
+        <label for="flagIn">Final Flag</label>
+        <input id="flagIn" placeholder="RAM{XMAS_...}" autocomplete="off" />
+      </div>
+      <button id="btnFlag">Submit</button>
+    </div>
+    <div class="log" id="flagLog">Status: waiting…</div>
+
+    <div id="reward" style="display:none; margin-top:12px;">
+      <div class="log"><span class="ok">Unlocked:</span> Merry Hacking Christmas</div>
+      <div class="log">
+        Δήλωσε ότι το βρήκες εδώ:
+        <div style="margin-top:8px;"><a id="sheetLink" href="#" target="_blank" rel="noreferrer">Open Google Sheet</a></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-/**
- * ===========================
- * CONFIG — συμπλήρωσέ το
- * ===========================
- * Βάλε εδώ τα SHA-256 (hex) των 9 keys.
- * Αν δεν τα έχεις έτοιμα, άνοιξε τη σελίδα με ?build=1 και χρησιμοποίησε τον Builder.
- */
+/* ======================
+   CONFIG — ΑΛΛΑΖΕΙΣ ΜΟΝΟ ΕΔΩ
+   ====================== */
 const CONFIG = {
-  // 9 x SHA-256 hex digests (lowercase). Placeholder values below:
+  // Βάλε εδώ 9 SHA-256 hex digests (lowercase) για τα keys/shards S1..S9
+  // (Use builder mode ?build=1)
   keyHashes: [
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
-    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "PUT_SHA256_OF_S1_HERE",
+    "PUT_SHA256_OF_S2_HERE",
+    "PUT_SHA256_OF_S3_HERE",
+    "PUT_SHA256_OF_S4_HERE",
+    "PUT_SHA256_OF_S5_HERE",
+    "PUT_SHA256_OF_S6_HERE",
+    "PUT_SHA256_OF_S7_HERE",
+    "PUT_SHA256_OF_S8_HERE",
+    "PUT_SHA256_OF_S9_HERE",
   ],
-  // για το τελικό “obfuscation”
-  vaultSalt: "ram|xmas|fsociety|athens",
+  // Salt που θα “αποκαλυφθεί” μέσω σεντουκιού (το master string τη χρειάζεται)
+  salt: "redwheelbarrow",
+  // Base64 του Google Sheet URL (ώστε να μην είναι ωμό στο source)
+  // π.χ. btoa("https://docs.google.com/spreadsheets/d/....")
+  sheetUrlB64: "PUT_BASE64_SHEET_URL_HERE",
 };
 
-/**
- * ===========================
- * Helpers
- * ===========================
- */
+/* ======================
+   Data model
+   ====================== */
+const ORDER = ["S2","S4","S6","S8","S1","S3","S5","S7","S9"]; // EVENS then ODDS
+const IDS   = ["S1","S2","S3","S4","S5","S6","S7","S8","S9"]; // for chest indexing
+
+const CLUES = {
+  S1: "Σημείωση #1: Οι ‘μονές’ έρχονται ΜΕΤΑ. (ODDS later.)",
+  S2: "Σημείωση #2: Ξεκίνα με τις ‘ζυγές’. (EVENS first.)",
+  S3: "Σημείωση #3: Prefix: fsociety|",
+  S4: "Σημείωση #4: Separator: | (pipe). No spaces.",
+  S5: "Σημείωση #5: Το lock αγαπάει τη λέξη: redwheelbarrow",
+  S6: "Σημείωση #6: Fingerprint: SHA-256 (UTF-8).",
+  S7: "Σημείωση #7: Πάρε τα πρώτα 12 hex, UPPERCASE.",
+  S8: "Σημείωση #8: Flag format: RAM{XMAS_<12HEX>}",
+  S9: "Σημείωση #9: Το splice order είναι 2-4-6-8-1-3-5-7-9.",
+};
+
+const state = {
+  opened: Object.fromEntries(IDS.map(id => [id, false])),
+  keys:   Object.fromEntries(IDS.map(id => [id, ""])),
+};
+
 const $ = (id) => document.getElementById(id);
 
-function normalizeKey(s){
-  return (s || "").trim();
-}
-function normalizeAnswer(s){
-  return (s || "").trim();
-}
 async function sha256Hex(str){
   const enc = new TextEncoder().encode(str);
   const buf = await crypto.subtle.digest("SHA-256", enc);
-  const arr = Array.from(new Uint8Array(buf));
-  return arr.map(b => b.toString(16).padStart(2,"0")).join("");
-}
-function toHexAscii(str){
-  return Array.from(str).map(ch => ch.charCodeAt(0).toString(16).padStart(2,"0")).join("").toUpperCase();
-}
-function b64NoPad(str){
-  // btoa works for ASCII; keys here are expected A–Z/0–9 style. If you use unicode keys, adapt.
-  return btoa(str).replace(/=+$/,"");
-}
-function caesarLetters(str, shift){
-  const A=65, Z=90;
-  return Array.from(str).map(ch=>{
-    const c = ch.charCodeAt(0);
-    if(c>=A && c<=Z){
-      return String.fromCharCode(((c-A+shift)%26)+A);
-    }
-    const a=97, z=122;
-    if(c>=a && c<=z){
-      return String.fromCharCode(((c-a+shift)%26)+a);
-    }
-    return ch;
-  }).join("");
-}
-function reorder246135(str){
-  // 1-based indices: 2,4,6,1,3,5
-  const s = str;
-  const idx = [1,3,5,0,2,4]; // 0-based
-  if(s.length < 6) return s; // fail-soft
-  return idx.map(i=>s[i] ?? "").join("");
-}
-function sortKey(str){
-  return Array.from(str).sort((a,b)=>a.localeCompare(b)).join("");
-}
-function rotateRight(str, k){
-  if(!str.length) return str;
-  const n = str.length;
-  const r = ((k % n) + n) % n;
-  return str.slice(n-r) + str.slice(0, n-r);
-}
-function digitSum(str){
-  let sum=0;
-  for(const ch of str){
-    if(ch>="0" && ch<="9") sum += (ch.charCodeAt(0)-48);
-  }
-  return sum;
-}
-// RFC4648 Base32 encode (no padding)
-function base32Encode(str){
-  const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  const bytes = new TextEncoder().encode(str);
-  let bits=0, value=0, output="";
-  for(const b of bytes){
-    value = (value<<8) | b;
-    bits += 8;
-    while(bits >= 5){
-      output += alphabet[(value >>> (bits-5)) & 31];
-      bits -= 5;
-    }
-  }
-  if(bits > 0){
-    output += alphabet[(value << (5-bits)) & 31];
-  }
-  return output; // no '=' padding
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
-/**
- * ===========================
- * Riddles (9)
- * Κάθε riddle: description + expected answer derived from the key.
- * ===========================
- */
-const RIDDLES = [
-  {
-    title: "01 — Order in the Dark",
-    difficulty: "Medium",
-    story: "Ο Elliot είπε: “Ό,τι είναι χαοτικό, πρώτα το βάζεις σε σειρά.”",
-    instruction: "Πάρε το KEY1 και ταξινόμησε τους χαρακτήρες αλφαριθμητικά (A–Z, 0–9). Γράψε το αποτέλεσμα.",
-    hint: "Παράδειγμα: Z1A9BC → 19ABCZ",
-    expected: async (key) => sortKey(key),
-  },
-  {
-    title: "02 — Dead Code Speaks",
-    difficulty: "Medium–Hard",
-    story: "Ό,τι φαίνεται ‘νεκρό’, συχνά κρύβει το πραγματικό μήνυμα.",
-    instruction: "Πάρε το KEY2 και γράψ’ το ανάποδα (reverse).",
-    hint: "Αν KEY2=ABC123 → 321CBA",
-    expected: async (key) => Array.from(key).reverse().join(""),
-  },
-  {
-    title: "03 — Received: Trust the Chain",
-    difficulty: "Hard",
-    story: "Τα headers δεν λένε ψέματα, αν ξέρεις ποιο layer να εμπιστευτείς.",
-    instruction: "Πάρε το KEY3 και κάνε reorder: θέσεις 2-4-6-1-3-5 (1-based).",
-    hint: "Δες το σαν ‘even indices first’ και μετά τα odd.",
-    expected: async (key) => reorder246135(key),
-  },
-  {
-    title: "04 — The Caesar Echo",
-    difficulty: "Hard",
-    story: "Κάποιος γέλασε: “Τα κλασικά δουλεύουν γιατί είναι απλά.”",
-    instruction: "Πάρε το KEY4 και κάνε Caesar shift +3 σε γράμματα (A→D). Τα digits μένουν ίδια.",
-    hint: "XYZ123 → ABC123",
-    expected: async (key) => caesarLetters(key, 3),
-  },
-  {
-    title: "05 — Policy Verification",
-    difficulty: "Hard",
-    story: "Δεν αρκεί να ‘φαίνεται σωστό’. Πρέπει να αποδεικνύεται.",
-    instruction: "Υπολόγισε SHA-256(KEY5) και γράψε τα ΠΡΩΤΑ 6 hex chars του digest (lowercase).",
-    hint: "Θέλεις output τύπου: a1b2c3",
-    expected: async (key) => (await sha256Hex(key)).slice(0, 6),
-  },
-  {
-    title: "06 — Encoded Command",
-    difficulty: "Hard",
-    story: "Κάποιος έκρυψε εντολές σε ‘αθώο’ encoding.",
-    instruction: "Κάνε Base64(KEY6) χωρίς '=' padding και γράψε τα ΤΕΛΕΥΤΑΙΑ 6 chars του base64 string.",
-    hint: "Το αποτέλεσμα είναι 6 χαρακτήρες. Πρόσεξε: χωρίς '='.",
-    expected: async (key) => {
-      const b = b64NoPad(key);
-      return b.slice(-6);
-    },
-  },
-  {
-    title: "07 — DNS Whispers",
-    difficulty: "Very Hard",
-    story: "Το DNS κουβαλάει δεδομένα όταν κανείς δεν κοιτάει προσεκτικά.",
-    instruction: "Κάνε Base32(KEY7) (RFC4648, χωρίς padding) και γράψε τους ΠΡΩΤΟΥΣ 6 χαρακτήρες.",
-    hint: "Base32 alphabet: A–Z και 2–7.",
-    expected: async (key) => base32Encode(key).slice(0, 6),
-  },
-  {
-    title: "08 — Text Hidden in Plain Sight",
-    difficulty: "Hard",
-    story: "Τα metadata κρύβουν περισσότερα απ’ όσα νομίζεις.",
-    instruction: "Μετέτρεψε το KEY8 σε HEX ASCII (2 hex ανά χαρακτήρα) και γράψε ΜΟΝΟ τα 6 ΠΡΩΤΑ hex digits.",
-    hint: "Output μόνο 6 χαρακτήρες (hex). Παράδειγμα: 'AB' → 4142...",
-    expected: async (key) => toHexAscii(key).slice(0, 6).toLowerCase(),
-  },
-  {
-    title: "09 — Ticket Granting Shift",
-    difficulty: "Very Hard",
-    story: "Το ticket σε πάει εκεί που πρέπει, αν κρατήσεις σωστή σειρά.",
-    instruction: "Υπολόγισε το άθροισμα των digits στο KEY9. Κάνε rotate-right το KEY9 κατά (sumDigits mod 6). Γράψε το rotated key.",
-    hint: "Αν sumDigits=7 και μήκος=6 → rotate-right κατά 1.",
-    expected: async (key) => {
-      const r = digitSum(key) % (key.length || 1);
-      return rotateRight(key, r);
-    },
-  },
-];
-
-// Minimal “obfuscation” for final message (not plain-text in source).
-// It will reveal only after all rooms cleared.
-function revealFinalMessage(){
-  // "Merry Hacking Christmas" XOR 0x17
-  const bytes = [
-    0x5a,0x72,0x65,0x65,0x6e,0x37,0x5f,0x76,0x74,0x7c,0x7e,0x79,0x37,0x54,0x65,0x65,0x7e,0x64,0x63,0x7a,0x64
-  ];
-  const plain = bytes.map(b => String.fromCharCode(b ^ 0x17)).join("");
-  $("finalMsg").textContent = plain;
-  $("finalBox").classList.add("show");
-  $("vaultState").textContent = "UNLOCKED";
-  $("vaultState").classList.remove("warn");
-  $("vaultState").classList.add("ok");
+function b64Decode(s){
+  try { return atob(s); } catch { return ""; }
 }
 
-/**
- * ===========================
- * UI / Flow
- * ===========================
- */
-const state = {
-  cleared: Array(9).fill(false),
-  keys: Array(9).fill(""),
-};
+function escapeHtml(s){
+  return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 
-function updateProgress(){
-  const done = state.cleared.filter(Boolean).length;
-  $("progress").textContent = `${done}/9`;
-  if(done === 9){
-    revealFinalMessage();
+function progress(){
+  return Object.values(state.opened).filter(Boolean).length;
+}
+
+function updateTop(){
+  $("prog").textContent = `${progress()}/9`;
+  if(progress() === 9){
+    $("vault").textContent = "READY";
+    $("vault").classList.remove("warn");
+    $("vault").classList.add("ok");
+    $("final").classList.add("show");
   }
 }
 
-function cardTemplate(i){
-  const r = RIDDLES[i];
+function chestCard(id){
+  const n = id.substring(1);
   return `
-    <div class="card locked" id="card-${i}">
-      <div class="title">
-        <h2>${r.title}</h2>
-        <span class="badge">${r.difficulty}</span>
-      </div>
-      <div class="desc">${r.story}</div>
-      <div class="desc"><b>Γρίφος:</b> ${r.instruction}</div>
-
-      <div class="row" style="margin-top:12px">
-        <div style="flex:1; min-width:240px">
-          <label for="key-${i}">Key ${i+1}</label><br/>
-          <input id="key-${i}" placeholder="π.χ. 6–12 chars (όπως το key σου)" autocomplete="off" />
-        </div>
-        <div style="flex:1; min-width:240px">
-          <label for="ans-${i}">Απάντηση</label><br/>
-          <input id="ans-${i}" placeholder="το αποτέλεσμα του γρίφου" autocomplete="off" />
-        </div>
-        <div style="display:flex; gap:8px; align-items:flex-end">
-          <button id="btn-${i}">Verify</button>
-          <button id="hintBtn-${i}">Hint</button>
-        </div>
+    <div class="card locked" id="card-${id}">
+      <div class="head">
+        <div class="title">Chest ${n}</div>
+        <div class="tag">${id}</div>
       </div>
 
-      <div class="hint" id="hint-${i}">${r.hint}</div>
-      <div class="log" id="log-${i}">Status: LOCKED</div>
+      <div class="chest" id="clue-${id}" style="display:none;"></div>
+
+      <div style="margin-top:10px;">
+        <label for="key-${id}">Key (${id})</label>
+        <input id="key-${id}" placeholder="enter key" autocomplete="off" />
+      </div>
+
+      <div class="row">
+        <button id="btn-${id}">Unlock</button>
+      </div>
+
+      <div class="log" id="log-${id}">Status: locked</div>
     </div>
   `;
 }
 
-async function verifyRoom(i){
-  const key = normalizeKey($(`key-${i}`).value);
-  const ans = normalizeAnswer($(`ans-${i}`).value);
+function mount(){
+  $("chests").innerHTML = IDS.map(chestCard).join("");
+  IDS.forEach((id, idx) => {
+    $(`btn-${id}`).addEventListener("click", () => unlockChest(id, idx));
+  });
+  $("btnFlag").addEventListener("click", submitFlag);
+  updateTop();
+}
 
-  const log = $(`log-${i}`);
-  const card = $(`card-${i}`);
+async function unlockChest(id, idx){
+  const input = ($(`key-${id}`).value || "").trim();
+  const log = $(`log-${id}`);
+  const card = $(`card-${id}`);
 
-  if(!key || !ans){
-    log.innerHTML = `Status: <span class="err">missing input</span>\n- χρειάζεται Key και Απάντηση`;
+  if(!input){
+    log.innerHTML = `Status: <span class="err">missing key</span>`;
     return;
   }
 
-  // Key validation via SHA-256 hash
-  const h = await sha256Hex(key);
-  const expectedKeyHash = (CONFIG.keyHashes[i] || "").toLowerCase().trim();
-  if(!expectedKeyHash || expectedKeyHash.includes("PUT_SHA256")){
-    log.innerHTML = `Status: <span class="warn">config incomplete</span>\n- συμπλήρωσε CONFIG.keyHashes[${i}]`;
-    return;
-  }
-  if(h !== expectedKeyHash){
-    log.innerHTML = `Status: <span class="err">invalid key</span>\n- το Key ${i+1} δεν ταιριάζει`;
+  const expectedHash = (CONFIG.keyHashes[idx] || "").toLowerCase().trim();
+  if(!expectedHash || expectedHash.includes("PUT_SHA256")){
+    log.innerHTML = `Status: <span class="warn">config incomplete</span>\n- Fill CONFIG.keyHashes[${idx}]`;
     return;
   }
 
-  // Answer validation computed from the key
-  const expectedAnswer = await RIDDLES[i].expected(key);
-  const ok = (ans === expectedAnswer);
-
-  if(!ok){
-    log.innerHTML = `Status: <span class="err">wrong answer</span>\n- Το key είναι σωστό, αλλά ο μετασχηματισμός/απάντηση όχι.\n- Tip: δες το Hint.`;
+  const h = await sha256Hex(input);
+  if(h !== expectedHash){
+    log.innerHTML = `Status: <span class="err">wrong key</span>\n- try again`;
     return;
   }
 
-  // Mark cleared
-  state.cleared[i] = true;
-  state.keys[i] = key;
+  state.opened[id] = true;
+  state.keys[id] = input;
 
   card.classList.remove("locked");
-  card.classList.add("done");
-  log.innerHTML = `Status: <span class="ok">cleared</span>\nFlag unlocked for this step.`;
-  updateProgress();
+  card.classList.add("open");
+  log.innerHTML = `Status: <span class="ok">opened</span>`;
+
+  const clueBox = $(`clue-${id}`);
+  clueBox.style.display = "block";
+  clueBox.innerHTML = `<b>Clue:</b> ${escapeHtml(CLUES[id])}`;
+
+  updateTop();
 }
 
-function mountRooms(){
-  const container = $("rooms");
-  container.innerHTML = RIDDLES.map((_,i)=>cardTemplate(i)).join("");
+async function expectedFlagFromKeys(){
+  // build master: fsociety|<S2>|<S4>|...|<S9>|<salt>
+  const shards = ORDER.map(k => state.keys[k] || "");
+  if(shards.some(s => !s)) return "";
 
-  for(let i=0;i<9;i++){
-    $(`btn-${i}`).addEventListener("click", ()=>verifyRoom(i));
-    $(`hintBtn-${i}`).addEventListener("click", ()=>{
-      $(`hint-${i}`).classList.toggle("show");
-    });
+  const master = "fsociety|" + shards.join("|") + "|" + CONFIG.salt;
+  const digest = await sha256Hex(master);
+  const head12 = digest.slice(0, 12).toUpperCase();
+  return `RAM{XMAS_${head12}}`;
+}
+
+async function submitFlag(){
+  const log = $("flagLog");
+  if(progress() !== 9){
+    log.innerHTML = `Status: <span class="warn">not ready</span>\n- open all 9 chests first`;
+    return;
   }
-  updateProgress();
+
+  const userFlag = ($("flagIn").value || "").trim();
+  if(!userFlag){
+    log.innerHTML = `Status: <span class="err">missing flag</span>`;
+    return;
+  }
+
+  const expected = await expectedFlagFromKeys();
+  if(!expected){
+    log.innerHTML = `Status: <span class="err">missing key-material</span>\n- something went wrong with keys`;
+    return;
+  }
+
+  if(userFlag !== expected){
+    log.innerHTML = `Status: <span class="err">incorrect</span>\n- check order / separators / uppercase hex / no spaces`;
+    return;
+  }
+
+  // Success
+  log.innerHTML = `Status: <span class="ok">correct</span>`;
+  const url = b64Decode(CONFIG.sheetUrlB64);
+  if(!url || url.startsWith("PUT_")){
+    $("sheetLink").href = "#";
+    $("sheetLink").textContent = "Sheet URL not configured";
+  }else{
+    $("sheetLink").href = url;
+  }
+  $("reward").style.display = "block";
 }
 
-/**
- * ===========================
- * Builder (?build=1)
- * ===========================
- */
+/* ======================
+   Builder mode (?build=1)
+   ====================== */
 function isBuildMode(){
   const u = new URL(location.href);
   return u.searchParams.get("build") === "1";
@@ -496,7 +334,7 @@ function isBuildMode(){
 async function runBuilder(){
   $("builder").classList.add("show");
   $("btnBuild").addEventListener("click", async ()=>{
-    const raw = ($("keysPaste").value || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const raw = ($("keysIn").value || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     if(raw.length !== 9){
       $("buildOut").textContent = `Need exactly 9 keys (one per line). Found: ${raw.length}`;
       return;
@@ -506,19 +344,13 @@ async function runBuilder(){
       hashes.push(await sha256Hex(k));
     }
     $("buildOut").textContent =
-      "Paste this into CONFIG.keyHashes:\n\n" +
-      JSON.stringify(hashes, null, 2) +
-      "\n\n(Then remove ?build=1 and optionally remove the Builder block before publishing.)";
+      "Paste into CONFIG.keyHashes (S1..S9 order):\n\n" +
+      JSON.stringify(hashes, null, 2);
   });
 }
 
-/**
- * ===========================
- * Boot
- * ===========================
- */
 (async function init(){
-  mountRooms();
+  mount();
   if(isBuildMode()){
     await runBuilder();
   }
