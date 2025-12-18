@@ -3,167 +3,525 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAM | Final Boss</title>
+  <title>RAM | Final Boss Vault</title>
   <style>
     :root{
-      --bg:#070a07; --panel:#0b120b; --text:#cfe8cf; --muted:#86a186;
-      --green:#5dff78; --amber:#ffd65d; --red:#ff5d5d; --border:#173017;
+      --bg0:#06070b;
+      --bg1:#070a12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.16);
+
+      --text:#eaf2ff;
+      --muted: rgba(234,242,255,.68);
+
+      --a:#7c3aed;   
+      --b:#22c55e;   
+      --c:#06b6d4;   
+      --warn:#fbbf24;
+      --err:#fb7185;
+
+      --shadow: 0 24px 70px rgba(0,0,0,.55);
+      --shadow2: 0 14px 40px rgba(0,0,0,.40);
+
+      --r: 18px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
     }
-    body{margin:0; background:radial-gradient(1100px 600px at 25% 10%, #0b160b 0%, var(--bg) 55%);
-      color:var(--text); font-family:var(--mono); letter-spacing:.2px;}
-    .wrap{max-width:1100px; margin:0 auto; padding:22px 16px 60px;}
-    .top{border:1px solid var(--border); background:linear-gradient(180deg,#0b160b,#070a07);
-      border-radius:16px; padding:14px 14px 12px; box-shadow:0 10px 28px rgba(0,0,0,.35);}
-    h1{margin:0 0 6px; font-size:16px; color:var(--green);}
-    .sub{color:var(--muted); font-size:12px; line-height:1.45;}
-    .pill{display:inline-flex; gap:10px; align-items:center; margin-top:10px;
-      border:1px solid var(--border); background:#081008; padding:6px 10px; border-radius:999px; font-size:12px; color:var(--muted);}
-    .pill b{color:var(--text);}
-    .grid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:14px;}
-    @media (max-width:900px){.grid{grid-template-columns:repeat(2, minmax(0, 1fr));}}
-    @media (max-width:560px){.grid{grid-template-columns:1fr;}}
-    .card{border:1px solid var(--border); background:linear-gradient(180deg,#0a130a,#070a07);
-      border-radius:16px; padding:12px; box-shadow:0 10px 22px rgba(0,0,0,.25); position:relative;}
-    .card.locked::before{content:"LOCKED"; position:absolute; top:10px; right:10px; font-size:11px;
-      color:rgba(255,214,93,.95); border:1px solid rgba(255,214,93,.35); background:rgba(255,214,93,.06);
-      padding:3px 8px; border-radius:999px;}
-    .card.open::before{content:"OPEN"; color:rgba(93,255,120,.95); border:1px solid rgba(93,255,120,.35);
-      background:rgba(93,255,120,.06);}
-    .head{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
-    .title{margin:0; font-size:13px;}
-    .tag{font-size:11px; color:var(--muted); border:1px solid var(--border); background:#081008; padding:3px 8px; border-radius:999px;}
-    .chest{
-      margin-top:10px; border:1px dashed #234523; background:rgba(93,255,120,.035);
-      border-radius:14px; padding:10px; color:var(--muted); font-size:12px; line-height:1.45;
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: var(--sans);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124,58,237,.20), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(6,182,212,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 95%, rgba(34,197,94,.15), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
     }
-    label{font-size:12px; color:var(--muted);}
+
+    /* subtle “stars” */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.25) 40%, transparent 41%),
+        radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,.20) 40%, transparent 41%),
+        radial-gradient(1px 1px at 55% 35%, rgba(255,255,255,.18) 40%, transparent 41%),
+        radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,.22) 40%, transparent 41%),
+        radial-gradient(1px 1px at 90% 25%, rgba(255,255,255,.15) 40%, transparent 41%);
+      opacity:.55;
+      filter: blur(.15px);
+    }
+
+    .wrap{max-width:1200px; margin:0 auto; padding:26px 18px 70px;}
+    .hero{
+      border:1px solid var(--stroke);
+      border-radius: calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+      backdrop-filter: blur(14px);
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:-80px -120px auto auto;
+      width:320px; height:320px;
+      background: radial-gradient(circle at 30% 30%, rgba(124,58,237,.45), transparent 65%);
+      transform: rotate(12deg);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .heroTop{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:flex-start;
+      min-width:260px;
+    }
+    .logo{
+      width:40px; height:40px;
+      border-radius:14px;
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(6,182,212,.75));
+      box-shadow: 0 12px 30px rgba(124,58,237,.25);
+      border:1px solid rgba(255,255,255,.18);
+      display:grid; place-items:center;
+    }
+    .logo svg{opacity:.95}
+    h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+      max-width:820px;
+    }
+
+    .meta{
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size:12px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{
+      width:9px;height:9px;border-radius:999px;
+      background: var(--b);
+      box-shadow: 0 0 18px rgba(34,197,94,.45);
+    }
+    .pill b{color:var(--text); font-weight:700}
+    .kbd{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:3px 8px;
+      border:1px solid var(--stroke);
+      border-radius:10px;
+      background: rgba(255,255,255,.06);
+      color: rgba(234,242,255,.85);
+    }
+
+    .progressWrap{
+      margin-top:14px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:10px 12px;
+      backdrop-filter: blur(10px);
+    }
+    .progressRow{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color: var(--muted); font-size:12px;
+    }
+    .bar{
+      margin-top:8px;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(124,58,237,.95), rgba(6,182,212,.85), rgba(34,197,94,.85));
+      box-shadow: 0 0 18px rgba(6,182,212,.25);
+      transition: width .45s ease;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:14px;
+      margin-top:16px;
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    @media (max-width:620px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow2);
+      padding:14px;
+      backdrop-filter: blur(14px);
+      position:relative;
+      overflow:hidden;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.20);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.045));
+    }
+
+    .badge{
+      position:absolute;
+      top:12px; right:12px;
+      font-family: var(--mono);
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,242,255,.75);
+      display:flex; align-items:center; gap:8px;
+    }
+    .badge .lockIcon{opacity:.9}
+    .card.open .badge{
+      border-color: rgba(34,197,94,.30);
+      color: rgba(34,197,94,.95);
+      background: rgba(34,197,94,.08);
+    }
+
+    .head{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .title{
+      display:flex; gap:10px; align-items:center;
+    }
+    .chestIcon{
+      width:34px; height:34px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      display:grid; place-items:center;
+    }
+    .chestIcon svg{opacity:.92}
+    .title h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .tag{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(234,242,255,.72);
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+    }
+    .desc{
+      margin-top:10px;
+      color: var(--muted);
+      font-size:12.5px;
+      line-height:1.55;
+    }
+
+    .clue{
+      margin-top:12px;
+      border:1px solid rgba(6,182,212,.22);
+      background: rgba(6,182,212,.06);
+      border-radius: 14px;
+      padding:10px 10px;
+      color: rgba(234,242,255,.78);
+      font-size:12px;
+      display:none;
+    }
+    .clue b{color: rgba(234,242,255,.95);}
+
+    label{display:block; margin-top:12px; font-size:12px; color: rgba(234,242,255,.70);}
     input{
-      width:100%; background:#061006; color:var(--text);
-      border:1px solid var(--border); border-radius:12px; padding:10px; outline:none; font-family:var(--mono);
+      width:100%;
+      margin-top:6px;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      font-family: var(--mono);
+      outline:none;
     }
-    input:focus{border-color:#2a6a2a; box-shadow:0 0 0 3px rgba(93,255,120,.08);}
-    .row{display:flex; gap:8px; align-items:flex-end; margin-top:10px;}
+    input:focus{
+      border-color: rgba(6,182,212,.38);
+      box-shadow: 0 0 0 4px rgba(6,182,212,.10);
+    }
+
+    .row{display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap;}
     button{
-      background:linear-gradient(180deg,#0f1c0f,#081108);
-      color:var(--text); border:1px solid var(--border);
-      padding:10px 12px; border-radius:12px; cursor:pointer; font-family:var(--mono); font-size:12px;
-      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(135deg, rgba(124,58,237,.45), rgba(6,182,212,.25));
+      color: rgba(234,242,255,.92);
+      padding:12px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.2px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
     }
-    button:hover{border-color:#2a6a2a;}
-    .log{margin-top:10px; font-size:12px; background:#060c06; border:1px solid var(--border);
-      border-radius:12px; padding:10px; color:var(--muted); white-space:pre-wrap;}
-    .ok{color:var(--green);} .warn{color:var(--amber);} .err{color:var(--red);}
-    .final{margin-top:14px; border:1px solid rgba(93,255,120,.35); background:rgba(93,255,120,.06);
-      border-radius:16px; padding:14px; display:none;}
+    button:hover{
+      border-color: rgba(255,255,255,.26);
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba(124,58,237,.55), rgba(6,182,212,.30));
+    }
+    button:active{transform: translateY(0px);}
+
+    .log{
+      margin-top:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      border-radius: 14px;
+      padding:10px;
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,242,255,.70);
+      white-space:pre-wrap;
+    }
+    .ok{color: rgba(34,197,94,.95)}
+    .warn{color: rgba(251,191,36,.95)}
+    .err{color: rgba(251,113,133,.98)}
+
+    .final{
+      margin-top:16px;
+      border:1px solid rgba(34,197,94,.22);
+      background: rgba(34,197,94,.06);
+      border-radius: calc(var(--r) + 6px);
+      padding:16px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      display:none;
+    }
     .final.show{display:block;}
-    .final h2{margin:0 0 8px; font-size:14px; color:var(--green);}
-    .final .riddle{color:var(--muted); font-size:12px; line-height:1.5;}
-    .final .riddle ul{margin:8px 0 0 18px; padding:0;}
-    .final .riddle li{margin:4px 0;}
-    .builder{margin-top:14px; border:1px solid rgba(255,214,93,.35); background:rgba(255,214,93,.06);
-      border-radius:16px; padding:14px; display:none;}
+    .final h3{
+      margin:0 0 8px;
+      font-size:15px;
+      color: rgba(34,197,94,.95);
+      letter-spacing:.2px;
+    }
+    .riddle{
+      color: rgba(234,242,255,.78);
+      font-size:12.5px;
+      line-height:1.6;
+    }
+    .riddle ul{margin:8px 0 0 18px; padding:0;}
+    .riddle li{margin:5px 0;}
+    .riddle code{font-family: var(--mono); font-size:12px; color: rgba(234,242,255,.92);}
+
+    a{color: rgba(6,182,212,.95); text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .reward{display:none; margin-top:12px;}
+    .reward .callout{
+      border:1px solid rgba(6,182,212,.22);
+      background: rgba(6,182,212,.06);
+      border-radius: 16px;
+      padding:12px;
+      color: rgba(234,242,255,.82);
+    }
+
+    .builder{display:none; margin-top:16px;}
     .builder.show{display:block;}
     textarea{
-      width:100%; min-height:130px; background:#061006; color:var(--text);
-      border:1px solid var(--border); border-radius:12px; padding:10px; outline:none; font-family:var(--mono);
+      width:100%;
+      min-height:140px;
+      margin-top:10px;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      font-family: var(--mono);
+      outline:none;
     }
-    a{color:var(--green); text-decoration:none;}
-    a:hover{text-decoration:underline;}
+    textarea:focus{
+      border-color: rgba(251,191,36,.40);
+      box-shadow: 0 0 0 4px rgba(251,191,36,.10);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important;}
+      .card:hover{transform:none;}
+      button:hover{transform:none;}
+    }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <h1>fsociety // Final Boss</h1>
-    <div class="sub">
-      9 σεντούκια. 9 κλειδιά. Κάθε ξεκλείδωμα αποκαλύπτει ένα κομμάτι του τελικού γρίφου.
-      Μόλις ανοίξουν όλα, θα χρειαστεί να βγάλεις το τελικό <b>flag</b>. Με το σωστό flag θα εμφανιστεί ο σύνδεσμος “δήλωσης”.
-    </div>
-    <div class="pill"><span class="ok">●</span> Πρόοδος: <b id="prog">0/9</b> · Vault: <b id="vault" class="warn">LOCKED</b></div>
-  </div>
+  <div class="wrap">
+    <div class="hero">
+      <div class="heroTop">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2l8.5 4.8v10.4L12 22l-8.5-4.8V6.8L12 2z" stroke="rgba(255,255,255,.92)" stroke-width="1.6"/>
+              <path d="M8 12h8" stroke="rgba(255,255,255,.92)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 8v8" stroke="rgba(255,255,255,.92)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>RAM Final Boss Vault</h1>
+            <div class="sub">
+              9 σεντούκια, 9 <b>Flags</b>. Κάθε σωστό flag ανοίγει ένα σεντούκι και αποκαλύπτει ένα clue.
+              Μόλις ανοίξουν όλα, θα σου ζητηθεί το τελικό <span class="kbd">Final Flag</span>.
+              Αν είναι σωστό, θα εμφανιστεί ο σύνδεσμος για το Google Sheet (checkbox δήλωσης).
+            </div>
+          </div>
+        </div>
 
-  <!-- Instructor builder (use ?build=1) -->
-  <div id="builder" class="builder">
-    <div class="sub"><b>Instructor Builder</b> — άνοιξε τη σελίδα με <code>?build=1</code>, κάνε paste τα 9 keys (ένα ανά γραμμή) και πάρε έτοιμο JSON για <code>CONFIG.keyHashes</code>.</div>
-    <div style="margin-top:10px"><textarea id="keysIn" placeholder="KEY1&#10;KEY2&#10;...&#10;KEY9"></textarea></div>
-    <div class="row">
-      <button id="btnBuild">Generate keyHashes</button>
-    </div>
-    <div class="log" id="buildOut">Waiting…</div>
-  </div>
-
-  <div class="grid" id="chests"></div>
-
-  <div class="final" id="final">
-    <h2>Final Riddle</h2>
-    <div class="riddle">
-      Έχεις πλέον όλα τα κομμάτια. Το τελικό flag προκύπτει από τα 9 shards που έδωσαν τα rooms.
-      <ul>
-        <li><b>Splice Order</b>: “EVENS first, ODDS later”.</li>
-        <li>Το master string ξεκινά με <code>fsociety|</code> και χρησιμοποιεί <code>|</code> ως separator (χωρίς κενά).</li>
-        <li>Στο τέλος προσθέτεις το “salt” που έμαθες από τα σεντούκια.</li>
-        <li>Υπολογίζεις <b>SHA-256</b> του master string (UTF-8).</li>
-        <li>Παίρνεις τα <b>πρώτα 12</b> hex (UPPERCASE).</li>
-        <li>Flag format: <code>RAM{XMAS_&lt;12HEX&gt;}</code></li>
-      </ul>
-    </div>
-
-    <div class="row">
-      <div style="flex:1; min-width:260px;">
-        <label for="flagIn">Final Flag</label>
-        <input id="flagIn" placeholder="RAM{XMAS_...}" autocomplete="off" />
+        <div class="meta">
+          <div class="pill"><span class="dot"></span> Πρόοδος: <b id="prog">0/9</b></div>
+          <div class="pill">Vault: <b id="vaultState" class="warn">LOCKED</b></div>
+          <div class="pill">Hint: <span class="kbd">EVENS → ODDS</span></div>
+        </div>
       </div>
-      <button id="btnFlag">Submit</button>
-    </div>
-    <div class="log" id="flagLog">Status: waiting…</div>
 
-    <div id="reward" style="display:none; margin-top:12px;">
-      <div class="log"><span class="ok">Unlocked:</span> Merry Hacking Christmas</div>
-      <div class="log">
-        Δήλωσε ότι το βρήκες εδώ:
-        <div style="margin-top:8px;"><a id="sheetLink" href="#" target="_blank" rel="noreferrer">Open Google Sheet</a></div>
+      <div class="progressWrap">
+        <div class="progressRow">
+          <div>Unlock all chests to reveal the Final Riddle.</div>
+          <div><span class="kbd" id="pct">0%</span></div>
+        </div>
+        <div class="bar"><div id="barFill"></div></div>
       </div>
     </div>
+
+    <div class="builder" id="builder">
+      <div class="card" style="margin-top:16px;">
+        <div class="head">
+          <div class="title">
+            <div class="chestIcon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M5 11h14v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9z" stroke="rgba(234,242,255,.9)" stroke-width="1.6"/>
+                <path d="M7 11V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4" stroke="rgba(234,242,255,.9)" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <h2>Instructor Builder</h2>
+          </div>
+          <div class="tag">use ?build=1</div>
+        </div>
+        <div class="desc">
+          Paste εδώ τα 9 Flags (ένα ανά γραμμή) και πάρε έτοιμο JSON. (Δεν το χρειάζεσαι πλέον, αφού μου έδωσες hashes.)
+        </div>
+        <textarea id="flagsIn" placeholder="FLAG1&#10;FLAG2&#10;...&#10;FLAG9"></textarea>
+        <div class="row">
+          <button id="btnBuild">Generate flagHashes</button>
+        </div>
+        <div class="log" id="buildOut">Waiting…</div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="final" id="finalBox">
+      <h3>Final Riddle</h3>
+      <div class="riddle">
+        Έχεις πλέον όλα τα clues. Το τελικό flag προκύπτει από τα 9 Flags που έβαλες στα σεντούκια.
+        <ul>
+          <li><b>Splice Order</b>: “EVENS first, ODDS later”.</li>
+          <li>Master prefix: <code>fsociety|</code></li>
+          <li>Separator: <code>|</code> (pipe), χωρίς κενά.</li>
+          <li>Στο τέλος προσθέτεις το <b>salt</b> (από τα clues).</li>
+          <li>Υπολογίζεις <b>SHA-256</b> (UTF-8) του master string.</li>
+          <li>Παίρνεις τα <b>πρώτα 12</b> hex σε <b>UPPERCASE</b>.</li>
+          <li>Flag format: <code>RAM{XMAS_&lt;12HEX&gt;}</code></li>
+        </ul>
+      </div>
+
+      <div class="row">
+        <div style="flex:1; min-width:260px;">
+          <label for="finalFlag">Final Flag</label>
+          <input id="finalFlag" placeholder="RAM{XMAS_...}" autocomplete="off" />
+        </div>
+        <button id="btnSubmitFinal">Submit</button>
+      </div>
+
+      <div class="log" id="finalLog">Status: waiting…</div>
+
+      <div class="reward" id="reward">
+        <div class="callout">
+          <div><span class="ok">Unlocked:</span> <b>Merry Hacking Christmas</b></div>
+          <div style="margin-top:8px;">
+            Δήλωσε ότι το βρήκες εδώ:
+            <div style="margin-top:8px;">
+              <a id="sheetLink" href="#" target="_blank" rel="noreferrer">Open Google Sheet</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
-
 const CONFIG = {
-
-  keyHashes: [
-    "15b946fadee00d538bb6427e7cce6af3c090dc6b91d992b1c25863184c99123c",
-    "ddca4d8d6bb244c7d870847598f263aa57ba2ca8abcb3ffd391870dd36f64b6d",
-    "5c6eaf25251ae7e193c078c4a63d8ee72ee2ba5d5b4cbc782d5d956da9f4b5dd",
-    "bb1725c9f2f92e3f83ed4f5e8e3b33805e13f343f7216254f684c0ba70d2053e",
-    "6fd61b7f86d2aca9dd9da6a6caf7a13c81232d4d9d1412b3de540076a7160837",
-    "bddb1134c23604c9b7007349120f6010fe24a421f26939807ee1088192abfa42",
-    "009e5094840931377915e3aa3989622d55073218ae7fb4e9508a8083626483d2",
-    "793797d875183f977de23cb0a6af131155d478e5f846d3858fbd41b4da6c16b6",
-    "ea503a2d5d25aef48e446427a884a36b7d58c666414474e28e8ac03b959a58d3",
+  flagHashes: [
+    "15b946fadee00d538bb6427e7cce6af3c090dc6b91d992b1c25863184c99123c", // S1
+    "ddca4d8d6bb244c7d870847598f263aa57ba2ca8abcb3ffd391870dd36f64b6d", // S2
+    "5c6eaf25251ae7e193c078c4a63d8ee72ee2ba5d5b4cbc782d5d956da9f4b5dd", // S3
+    "bb1725c9f2f92e3f83ed4f5e8e3b33805e13f343f7216254f684c0ba70d2053e", // S4
+    "6fd61b7f86d2aca9dd9da6a6caf7a13c81232d4d9d1412b3de540076a7160837", // S5
+    "bddb1134c23604c9b7007349120f6010fe24a421f26939807ee1088192abfa42", // S6
+    "009e5094840931377915e3aa3989622d55073218ae7fb4e9508a8083626483d2", // S7
+    "793797d875183f977de23cb0a6af131155d478e5f846d3858fbd41b4da6c16b6", // S8
+    "ea503a2d5d25aef48e446427a884a36b7d58c666414474e28e8ac03b959a58d3", // S9
   ],
   salt: "redwheelbarrow",
   sheetUrlB64: "aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvMWdCTHpiR3ZPTnhmZFRmNGlnSWktb2dFbjF5Qlg5cWl5UTBmX0FJazlCYzAvZWRpdD91c3A9c2hhcmluZw==",
 };
-const ORDER = ["S2","S4","S6","S8","S1","S3","S5","S7","S9"]; 
-const IDS   = ["S1","S2","S3","S4","S5","S6","S7","S8","S9"]; 
+
+const IDS = ["S1","S2","S3","S4","S5","S6","S7","S8","S9"];
+const ORDER = ["S2","S4","S6","S8","S1","S3","S5","S7","S9"];
 
 const CLUES = {
-  S1: "Σημείωση #1: Οι ‘μονές’ έρχονται ΜΕΤΑ. (ODDS later.)",
-  S2: "Σημείωση #2: Ξεκίνα με τις ‘ζυγές’. (EVENS first.)",
-  S3: "Σημείωση #3: Prefix: fsociety|",
-  S4: "Σημείωση #4: Separator: | (pipe). No spaces.",
-  S5: "Σημείωση #5: Το lock αγαπάει τη λέξη: redwheelbarrow",
-  S6: "Σημείωση #6: Fingerprint: SHA-256 (UTF-8).",
-  S7: "Σημείωση #7: Πάρε τα πρώτα 12 hex, UPPERCASE.",
-  S8: "Σημείωση #8: Flag format: RAM{XMAS_<12HEX>}",
-  S9: "Σημείωση #9: Το splice order είναι 2-4-6-8-1-3-5-7-9.",
+  S1: "Σημείωση: Οι μονές έρχονται μετά. (ODDS later.)",
+  S2: "Σημείωση: Ξεκίνα με τις ζυγές. (EVENS first.)",
+  S3: "Prefix: fsociety|",
+  S4: "Separator: | (pipe), χωρίς κενά.",
+  S5: "Salt keyword: redwheelbarrow",
+  S6: "Fingerprint: SHA-256 (UTF-8).",
+  S7: "Take first 12 hex, UPPERCASE.",
+  S8: "Final flag format: RAM{XMAS_<12HEX>}",
+  S9: "Order: 2-4-6-8-1-3-5-7-9",
 };
 
 const state = {
-  opened: Object.fromEntries(IDS.map(id => [id, false])),
-  keys:   Object.fromEntries(IDS.map(id => [id, ""])),
+  opened: Object.fromEntries(IDS.map(id => [id,false])),
+  flags:  Object.fromEntries(IDS.map(id => [id,""])),
 };
 
 const $ = (id) => document.getElementById(id);
@@ -178,42 +536,75 @@ function b64Decode(s){
   try { return atob(s); } catch { return ""; }
 }
 
-function escapeHtml(s){
-  return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
 function progress(){
   return Object.values(state.opened).filter(Boolean).length;
 }
 
 function updateTop(){
-  $("prog").textContent = `${progress()}/9`;
-  if(progress() === 9){
-    $("vault").textContent = "READY";
-    $("vault").classList.remove("warn");
-    $("vault").classList.add("ok");
-    $("final").classList.add("show");
+  const p = progress();
+  $("prog").textContent = `${p}/9`;
+  const pct = Math.round((p/9)*100);
+  $("pct").textContent = `${pct}%`;
+  $("barFill").style.width = `${pct}%`;
+
+  if(p === 9){
+    $("vaultState").textContent = "READY";
+    $("vaultState").classList.remove("warn");
+    $("vaultState").classList.add("ok");
+    $("finalBox").classList.add("show");
   }
 }
 
-function chestCard(id){
+function lockSvg(open){
+  if(open){
+    return `
+      <svg class="lockIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 11V8a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M6 11h12v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9z" stroke="currentColor" stroke-width="1.8" />
+        <path d="M10.5 16.2l1.2 1.2 2.8-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+  }
+  return `
+    <svg class="lockIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M6 11h12v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9z" stroke="currentColor" stroke-width="1.8" />
+      <path d="M12 14.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+}
+
+function chestIconSvg(){
+  return `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 10h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10z" stroke="rgba(234,242,255,.92)" stroke-width="1.6"/>
+      <path d="M7 10V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3" stroke="rgba(234,242,255,.92)" stroke-width="1.6"/>
+      <path d="M12 13v3" stroke="rgba(234,242,255,.92)" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>`;
+}
+
+function cardTemplate(id){
   const n = id.substring(1);
   return `
     <div class="card locked" id="card-${id}">
+      <div class="badge" id="badge-${id}">${lockSvg(false)} LOCKED</div>
+
       <div class="head">
-        <div class="title">Chest ${n}</div>
+        <div class="title">
+          <div class="chestIcon">${chestIconSvg()}</div>
+          <div>
+            <h2>Σεντούκι ${n}</h2>
+            <div class="desc">Ξεκλείδωσε με το <b>Flag</b> του ${id}.</div>
+          </div>
+        </div>
         <div class="tag">${id}</div>
       </div>
 
-      <div class="chest" id="clue-${id}" style="display:none;"></div>
+      <div class="clue" id="clue-${id}"></div>
 
-      <div style="margin-top:10px;">
-        <label for="key-${id}">Key (${id})</label>
-        <input id="key-${id}" placeholder="enter key" autocomplete="off" />
-      </div>
+      <label for="flag-${id}">Flag (${id})</label>
+      <input id="flag-${id}" placeholder='π.χ. RAM{S${n}_...}' autocomplete="off" />
 
       <div class="row">
-        <button id="btn-${id}">Unlock</button>
+        <button id="btn-${id}">Unlock chest</button>
       </div>
 
       <div class="log" id="log-${id}">Status: locked</div>
@@ -222,96 +613,97 @@ function chestCard(id){
 }
 
 function mount(){
-  $("chests").innerHTML = IDS.map(chestCard).join("");
+  $("grid").innerHTML = IDS.map(cardTemplate).join("");
   IDS.forEach((id, idx) => {
     $(`btn-${id}`).addEventListener("click", () => unlockChest(id, idx));
   });
-  $("btnFlag").addEventListener("click", submitFlag);
+  $("btnSubmitFinal").addEventListener("click", submitFinal);
   updateTop();
 }
 
 async function unlockChest(id, idx){
-  const input = ($(`key-${id}`).value || "").trim();
+  const input = ($(`flag-${id}`).value || "").trim();
   const log = $(`log-${id}`);
   const card = $(`card-${id}`);
+  const badge = $(`badge-${id}`);
 
   if(!input){
-    log.innerHTML = `Status: <span class="err">missing key</span>`;
+    log.innerHTML = `Status: <span class="err">missing flag</span>`;
     return;
   }
 
-  const expectedHash = (CONFIG.keyHashes[idx] || "").toLowerCase().trim();
-  if(!expectedHash || expectedHash.includes("PUT_SHA256")){
-    log.innerHTML = `Status: <span class="warn">config incomplete</span>\n- Fill CONFIG.keyHashes[${idx}]`;
-    return;
-  }
-
+  const expectedHash = (CONFIG.flagHashes[idx] || "").toLowerCase().trim();
   const h = await sha256Hex(input);
+
   if(h !== expectedHash){
-    log.innerHTML = `Status: <span class="err">wrong key</span>\n- try again`;
+    log.innerHTML = `Status: <span class="err">wrong flag</span>\nCheck the exact characters.`;
     return;
   }
 
   state.opened[id] = true;
-  state.keys[id] = input;
+  state.flags[id] = input;
 
   card.classList.remove("locked");
   card.classList.add("open");
+  badge.innerHTML = `${lockSvg(true)} OPEN`;
+
+  const clue = $(`clue-${id}`);
+  clue.style.display = "block";
+  clue.innerHTML = `<b>Clue:</b> ${CLUES[id]}`;
+
   log.innerHTML = `Status: <span class="ok">opened</span>`;
-
-  const clueBox = $(`clue-${id}`);
-  clueBox.style.display = "block";
-  clueBox.innerHTML = `<b>Clue:</b> ${escapeHtml(CLUES[id])}`;
-
   updateTop();
 }
 
-async function expectedFlagFromKeys(){
-  const shards = ORDER.map(k => state.keys[k] || "");
-  if(shards.some(s => !s)) return "";
+async function expectedFinalFlag(){
+ 
+  const parts = ORDER.map(k => state.flags[k] || "");
+  if(parts.some(p => !p)) return "";
 
-  const master = "fsociety|" + shards.join("|") + "|" + CONFIG.salt;
+  const master = "fsociety|" + parts.join("|") + "|" + CONFIG.salt;
   const digest = await sha256Hex(master);
   const head12 = digest.slice(0, 12).toUpperCase();
   return `RAM{XMAS_${head12}}`;
 }
 
-async function submitFlag(){
-  const log = $("flagLog");
+async function submitFinal(){
+  const log = $("finalLog");
   if(progress() !== 9){
-    log.innerHTML = `Status: <span class="warn">not ready</span>\n- open all 9 chests first`;
+    log.innerHTML = `Status: <span class="warn">not ready</span>\nOpen all 9 chests first.`;
     return;
   }
 
-  const userFlag = ($("flagIn").value || "").trim();
-  if(!userFlag){
+  const user = ($("finalFlag").value || "").trim();
+  if(!user){
     log.innerHTML = `Status: <span class="err">missing flag</span>`;
     return;
   }
 
-  const expected = await expectedFlagFromKeys();
+  const expected = await expectedFinalFlag();
   if(!expected){
-    log.innerHTML = `Status: <span class="err">missing key-material</span>\n- something went wrong with keys`;
+    log.innerHTML = `Status: <span class="err">missing material</span>\nSomething is missing from flags.`;
     return;
   }
 
-  if(userFlag !== expected){
-    log.innerHTML = `Status: <span class="err">incorrect</span>\n- check order / separators / uppercase hex / no spaces`;
+  if(user !== expected){
+    log.innerHTML =
+      `Status: <span class="err">incorrect</span>\n` +
+      `Checklist:\n- splice order EVENS->ODDS\n- separators '|' with no spaces\n- correct salt\n- first 12 hex UPPERCASE`;
     return;
   }
 
- 
   log.innerHTML = `Status: <span class="ok">correct</span>`;
   const url = b64Decode(CONFIG.sheetUrlB64);
-  if(!url || url.startsWith("PUT_")){
+
+  if(!url || url.includes("PUT_BASE64")){
     $("sheetLink").href = "#";
     $("sheetLink").textContent = "Sheet URL not configured";
-  }else{
+  } else {
     $("sheetLink").href = url;
   }
+
   $("reward").style.display = "block";
 }
-
 
 function isBuildMode(){
   const u = new URL(location.href);
@@ -321,17 +713,17 @@ function isBuildMode(){
 async function runBuilder(){
   $("builder").classList.add("show");
   $("btnBuild").addEventListener("click", async ()=>{
-    const raw = ($("keysIn").value || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const raw = ($("flagsIn").value || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     if(raw.length !== 9){
-      $("buildOut").textContent = `Need exactly 9 keys (one per line). Found: ${raw.length}`;
+      $("buildOut").textContent = `Need exactly 9 flags. Found: ${raw.length}`;
       return;
     }
     const hashes = [];
-    for(const k of raw){
-      hashes.push(await sha256Hex(k));
+    for(const f of raw){
+      hashes.push(await sha256Hex(f));
     }
     $("buildOut").textContent =
-      "Paste into CONFIG.keyHashes (S1..S9 order):\n\n" +
+      "Paste into CONFIG.flagHashes (S1..S9 order):\n\n" +
       JSON.stringify(hashes, null, 2);
   });
 }
